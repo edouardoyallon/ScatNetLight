@@ -8,6 +8,6 @@ Currently, ScatNetLight is able to process Caltech101, Caltech256, CIFAR10, CIFA
 Owner: Edouard Oyallon
 Authors: Matthew Hirn
 
-Based on the version of Laurent Sifre, Joakim Anden, Joan Bruna
+Based on the version of Laurent Sifre, Joakim Anden, Joan Bruna.
 
-Unsuper the supervision of Stéphane Mallat
+Under the supervision of Stéphane Mallat
