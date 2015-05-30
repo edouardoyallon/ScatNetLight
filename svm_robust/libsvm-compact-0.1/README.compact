@@ -1,0 +1,15 @@
+Based on libsvm-dense-3.12.
+
+Additions:
+	- Allows for _FLOAT_REP to reduce memory usage by using 32-bit precision instead of 64-bit.
+	- Extends _DENSE_REP support by making MATLAB routines compatible.
+	- Adds support of "precalculated" Gaussian kernels by performing the multiplication by gamma and exponentiating on-the-fly.
+	- Adds support for triangular kernels, which take up half the space of square kernels.
+	- When training multi-class SVMs, different pairwise SVMs are trained in parallel using OpenMP.
+	- Adds svmtrain_inplace to MATLAB routines, removing memory duplication when invoking LIBSVM from MATLAB.
+
+Date:
+	11 June, 2013
+
+Contact:
+	Joakim And√n (anden@cmap.polytechnique.fr)
