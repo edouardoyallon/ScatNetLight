@@ -1,13 +1,16 @@
-ScatNet
+ScatNetLight v0.1 - June 2015
 -------
 
-ScatNetLight is a MATLAB implementation of the Scattering Networks optimized for image classification.
+ScatNetLight is a MATLAB implementation of the Scattering Networks optimized for image classification on complex datasets. The software 'scatnet_light' and a classification pipeline are included in this version.
 
 See homepage of the Scattering Networks:
-
 http://www.di.ens.fr/data/scattering
 
+Software used in the paper:
+Deep Roto-Translation Scattering for Object Classification, Edouard Oyallon, Stéphane Mallat, accepted to CVPR 2015, http://arxiv.org/abs/1412.8659
+
 Author contact: Edouard Oyallon, edouard.oyallon@ens.fr
+Contributor: Matthew Hirn
 
 
 Install ScatNetLight + Classification pipeline
