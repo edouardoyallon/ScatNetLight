@@ -19,8 +19,11 @@ function atom_ind = ols(f,Phi,M,option_repeat)
 % Outputs:
 %
 %   1.) atom_ind (numeric): The indices of the atoms selected from Phi.
-
+%
 %% Pre-processing
+%
+% Author: Matthew Hirn
+% Slightly optimized by Edouard Oyallon
 
 % Dimensions and number of iterations
 [d,P] = size(Phi);

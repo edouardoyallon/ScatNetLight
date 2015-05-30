@@ -7,6 +7,8 @@ See homepage of the Scattering Networks:
 
 http://www.di.ens.fr/data/scattering
 
+Author contact: Edouard Oyallon, edouard.oyallon@ens.fr
+
 
 Install ScatNetLight + Classification pipeline
 ---------------

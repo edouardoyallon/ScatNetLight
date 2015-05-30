@@ -3,7 +3,7 @@ size_signal=options.Layers.size;
 J=options.Layers.J;
 scat_opt.M=2;
 
-option.Layers = fill_struct(options.Layers, 'Type_scattering', 'tr');
+options.Layers = fill_struct(options.Layers, 'Type_scattering', 'tr');
 
 
 

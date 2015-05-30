@@ -13,14 +13,14 @@ end
 
 
 
-scat_opt.M=2;
+scat_opt.M=2; % Maximum order of scattering, currently only order 2 is supported even if this is not hardcoded
 
 
 % First layer
-filt_opt.layer{1}.translation.J=J;
-filt_opt.layer{1}.translation.L=8;
-scat_opt.layer{1}.translation.oversampling=0;
-filt_opt.layer{1}.translation.n_wavelet_per_octave=1;
+filt_opt.layer{1}.translation.J=J; % Number of scale on the first layer
+filt_opt.layer{1}.translation.L=8; % Number of angles
+scat_opt.layer{1}.translation.oversampling=0; % Oversampling of the wavelet transform
+filt_opt.layer{1}.translation.n_wavelet_per_octave=1; % Number of wavelets per octave
 
 % Second layer
 % Translation
