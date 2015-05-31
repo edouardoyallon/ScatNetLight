@@ -48,7 +48,7 @@ function [U_phi, U_psi] = wavelet_layer_2_2d(U, filters, options)
         
         % compute mask for progressive paths
         options.psi_mask = calculate_psi & ...
-            (filters.psi.meta.j >= j+1);% + filters.meta.n_wavelet_per_octave);
+            (filters.psi.meta.j >= j+1);
         
         % set resolution of signal
         options.x_resolution = U.meta.resolution(p);
@@ -59,7 +59,6 @@ function [U_phi, U_psi] = wavelet_layer_2_2d(U, filters, options)
         % copy signal and meta for phi
         U_phi.signal{p} = x_phi;
         U_phi.meta.j(:,p) = [U.meta.j(:,p); filters.phi.meta.J];
-        %U_phi.meta.theta(:,p) = U.meta.theta(:,p);
         U_phi.meta.resolution(1,p) = meta_phi.resolution;
         
         % copy signal and meta for psi

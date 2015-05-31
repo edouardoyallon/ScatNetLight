@@ -32,19 +32,20 @@ function [x_phi, x_psi, meta_phi, meta_psi] = wavelet_2d(x, filters, options)
         options = struct;
     end
     
-    white_list = {'x_resolution', 'psi_mask', 'oversampling','type'};
+    white_list = {'x_resolution', 'psi_mask', 'oversampling','type','padding'};
     check_options_white_list(options, white_list);
     options = fill_struct(options, 'x_resolution', 0);
     options = fill_struct(options, 'oversampling', 1);
     options = fill_struct(options, 'psi_mask', ...
         ones(1,numel(filters.psi.filter)));
+    options = fill_struct(options, 'padding', 'symm');
     
     oversampling = options.oversampling;
     psi_mask = options.psi_mask;
     
     % Padding and Fourier transform
     sz_paded = filters.meta.size_filter / 2^options.x_resolution;
-    xf = fft2(pad_signal(x, sz_paded, []));
+    xf = fft2(pad_signal(x, sz_paded, options.padding));
     % Low-pass filtering, downsampling and unpadding
     
     J = filters.phi.meta.J;

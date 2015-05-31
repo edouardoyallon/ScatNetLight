@@ -40,7 +40,7 @@ Wop=cell(scat_opt.M+1,1);
 % Build the operator for each layer
 for m = 1:scat_opt.M+1
     % Check options
-    white_list_scat_layer_translation = { 'oversampling','M','type'};
+    white_list_scat_layer_translation = { 'oversampling','M','type','padding'};
     check_options_white_list(scat_opt.layer{m}.translation, white_list_scat_layer_translation);
     
     % Create filters for translation
