@@ -76,7 +76,7 @@ end
 
 if(calculate_psi)
     scales_p = unique(filters.psi.meta.j);
-    meta_theta=cell(length(scales_p));
+  
     for s=1:length(scales_p)
         for theta=1:L
             meta_theta{s}(theta)=find(U_psi.meta.j(1,:)==scales_p(s) & U_psi.meta.theta(1,:)==theta);
@@ -84,6 +84,7 @@ if(calculate_psi)
         U_orb.meta.resolution(1,s) = meta_psi.resolution(meta_theta{s}(1));
         U_orb.meta.j(s)=scales_p(s);
     end
+    
     U_orb.signal=format_orbit(U_psi.signal,meta_theta,3);
     U_psi=U_orb;
     U_psi.meta.layer=1;
