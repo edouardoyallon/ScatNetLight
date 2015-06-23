@@ -1,7 +1,8 @@
-function atom_ind = ols(f,Phi,M,option_repeat)
+% OLS
+% Orthogonal least squares
 %
 % Usage:
-%   atom_ind = ols(f,Phi,M,option_repeat)
+%   atom_ind = OLS(f,Phi,M,option_repeat)
 %
 % Summary:
 %   Computes the best M atoms for representing f in Phi via orthogonal
@@ -23,7 +24,9 @@ function atom_ind = ols(f,Phi,M,option_repeat)
 % Author: Matthew Hirn
 % Slightly optimized by Edouard Oyallon
 
-%% Pre-processing
+function atom_ind = ols(f,Phi,M,option_repeat)
+
+% --- Pre-processing ---
 
 % Dimensions and number of iterations
 [d,P] = size(Phi);
