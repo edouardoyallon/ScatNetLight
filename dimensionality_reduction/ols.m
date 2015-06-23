@@ -20,10 +20,10 @@ function atom_ind = ols(f,Phi,M,option_repeat)
 %
 %   1.) atom_ind (numeric): The indices of the atoms selected from Phi.
 %
-%% Pre-processing
-%
 % Author: Matthew Hirn
 % Slightly optimized by Edouard Oyallon
+
+%% Pre-processing
 
 % Dimensions and number of iterations
 [d,P] = size(Phi);
@@ -77,7 +77,6 @@ end
 PhiLambda=bsxfun(@times,PhiLambda,1./sqrt(sum(PhiLambda.^2,1)));
 end
 
-
 % Update the residual
 z = cat(2,z,Rf(:,m)'*Q(:,m));
 Rf(:,m+1) = Rf(:,m) - z(m)*Q(:,m);
@@ -108,11 +107,11 @@ while norm(Rf(:,m)) > eps('double') && m <= M
     % OPTIMIZATION Avoid one computation
     Q2=Q(:,m)';
     for r=1:option_repeat
-    for j=1:size(PhiLambda,2)
-        PhiLambda(:,j) = PhiLambda(:,j) - (Q2*PhiLambda(:,j))*Q(:,m);
-    end
-    % OPTIMIZATION Normalization
-    PhiLambda=bsxfun(@times,PhiLambda,1./sqrt(sum(PhiLambda.^2,1)));
+        for j=1:size(PhiLambda,2)
+            PhiLambda(:,j) = PhiLambda(:,j) - (Q2*PhiLambda(:,j))*Q(:,m);
+        end
+        % OPTIMIZATION Normalization
+        PhiLambda=bsxfun(@times,PhiLambda,1./sqrt(sum(PhiLambda.^2,1)));
     end
     
     % Update the residual
