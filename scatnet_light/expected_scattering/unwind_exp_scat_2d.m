@@ -1,11 +1,11 @@
-% UNWIND_EXP_SCAT
+% UNWIND_EXP_SCAT_2D
 % Unwinds the expected scattering coefficients to be used in regression 
 %   tasks. Also returns the scattering names and parameters for the unwound
 %   matrix.
 %
 % Usage:
-%   [X, coeff_names, coeff_pars] = UNWIND_EXP_SCAT(EU1, scat_type)
-%   [X, coeff_names, coeff_pars] = UNWIND_EXP_SCAT(EU1, EU2, scat_type)
+%   [X, coeff_names, coeff_pars] = UNWIND_EXP_SCAT_2D(EU1, scat_type)
+%   [X, coeff_names, coeff_pars] = UNWIND_EXP_SCAT_2D(EU1, EU2, scat_type)
 %
 % Inputs:
 %   1.) EU1 (cell): L1 expected scattering output
@@ -18,8 +18,11 @@
 %       scattering feature.
 %   3.) coeff_pars (struct): Struct containing fields with different
 %       scattering parameters, and their value for each scattering feature.
+%
+% See also:
+%   EXPECTED_SCAT_LIGHT_2D
 
-function [X, coeff_names, coeff_pars] = unwind_exp_scat(EU1, varargin)
+function [X, coeff_names, coeff_pars] = unwind_exp_scat_2d(EU1, varargin)
 
 % Variable inputs
 if length(varargin) == 1
