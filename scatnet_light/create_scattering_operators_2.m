@@ -37,7 +37,7 @@ filt_opt.layer{1}.translation.n_wavelet_per_octave = Q(1);
 filt_opt.layer{1}.translation.xi_psi = xi_psi;
 filt_opt.layer{1}.translation.slant_psi = slant;
 scat_opt.layer{1}.translation.oversampling = t_os;
-scat_opt.layer{1}.translation.boundary = bdry;
+scat_opt.layer{1}.translation.padding = bdry;
 
 % Second layer
 
@@ -48,7 +48,7 @@ filt_opt.layer{2}.translation.n_wavelet_per_octave = Q(2);
 filt_opt.layer{2}.translation.xi_psi = xi_psi;
 filt_opt.layer{2}.translation.slant_psi = slant;
 scat_opt.layer{2}.translation.oversampling = t_os;
-scat_opt.layer{2}.translation.boundary = bdry;
+scat_opt.layer{2}.translation.padding = bdry;
 scat_opt.layer{2}.translation.type = type; % define translation, rototranslation...
 
 % - Rotation
