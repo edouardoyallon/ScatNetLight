@@ -1,3 +1,14 @@
+% RESHAPE_ROTOTRANSLATION_SEPARABLE_EXP
+% Reshapes separable roto-translation output U for expected scattering
+%   computation.
+%
+% Usage:
+%   U2 = RESHAPE_ROTOTRANSLATION_SEPARABLE_EXP(U)
+%
+% This file is part of ScatNetLight.
+% Author: Matthew Hirn
+% email: matthew.hirn@ens.fr
+
 function U2 = reshape_rototranslation_separable_exp(U)
 
 % First move "negative scales" to be theta2 angles from [pi,2pi)

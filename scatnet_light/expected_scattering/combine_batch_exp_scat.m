@@ -14,6 +14,10 @@
 %
 % See also:
 %   CREATE_BATCH_IND, EXPECTED_SCAT_LIGHT_2D
+%
+% This file is part of ScatNetLight.
+% Author: Matthew Hirn
+% email: matthew.hirn@ens.fr
 
 function EU = combine_batch_exp_scat(EU_batch, batch_ind)
 

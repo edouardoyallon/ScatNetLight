@@ -11,6 +11,10 @@
 %   m (integer): Display the filters for scattering layer m [default: m=1]
 %   n (integer): Pause between filters for n seconds. If not inputted, the
 %       user must hit a key to continue to the next filter.
+%
+% This file is part of ScatNetLight.
+% Author: Matthew Hirn
+% email: matthew.hirn@ens.fr
 
 function display_filters_sequence_2d(filters,m,n)
 

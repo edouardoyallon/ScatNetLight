@@ -20,6 +20,10 @@
 %   Takes in a set of 2D scattering coefficients and returns the
 %   expected (mean) scattering coefficients. In particular, the expectation
 %   is taken along translations (space) and rotations (angles).
+%
+% This file is part of ScatNetLight.
+% Author: Matthew Hirn
+% email: matthew.hirn@ens.fr
 
 function EU = expected_scat_light_2d(U,scat_type,p)
 

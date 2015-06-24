@@ -35,6 +35,10 @@
 %
 % See also:
 %   EXPECTED_SCAT_LIGHT_2D, UNWIND_EXP_SCAT_2D
+%
+% This file is part of ScatNetLight.
+% Author: Matthew Hirn
+% email: matthew.hirn@ens.fr
 
 function [X, coeff_names, coeff_pars] = combine_exp_scat_2d(X1, X2, field_name, name1, name2, coeff_names1, coeff_pars1)
 

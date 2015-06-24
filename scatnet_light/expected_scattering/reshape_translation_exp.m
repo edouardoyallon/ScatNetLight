@@ -1,3 +1,13 @@
+% RESHAPE_TRANSLATION_EXP
+% Reshapes translation output U for expected scattering computation.
+%
+% Usage:
+%   U2 = RESHAPE_TRANSLATION_EXP(U)
+%
+% This file is part of ScatNetLight.
+% Author: Matthew Hirn
+% email: matthew.hirn@ens.fr
+
 function U2 = reshape_translation_exp(U)
 
 % Initialize

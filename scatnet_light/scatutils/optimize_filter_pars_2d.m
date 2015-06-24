@@ -15,6 +15,10 @@
 %   1.) slant (numeric): The slant value the minimizes the frame bound
 %       ratio.
 %   2.) lp_ratio (numeric): The frame bound ratio.
+%
+% This file is part of ScatNetLight.
+% Author: Matthew Hirn
+% email: matthew.hirn@ens.fr
 
 function [slant,lp_ratio] = optimize_filter_pars_2d(N,J,L,Q,xi)
 

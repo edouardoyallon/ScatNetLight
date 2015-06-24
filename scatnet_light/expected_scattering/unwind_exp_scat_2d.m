@@ -21,6 +21,10 @@
 %
 % See also:
 %   EXPECTED_SCAT_LIGHT_2D
+%
+% This file is part of ScatNetLight.
+% Author: Matthew Hirn
+% email: matthew.hirn@ens.fr
 
 function [X, coeff_names, coeff_pars] = unwind_exp_scat_2d(EU1, varargin)
 
