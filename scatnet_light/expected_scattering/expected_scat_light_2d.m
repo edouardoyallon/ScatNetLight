@@ -6,14 +6,14 @@
 %   EU = EXPECTED_SCAT_LIGHT_ROTO_2D(U,scat_type,p)
 %
 % Input
-%   U (cell): A cell in which U{m+1} are the m level roto scattering
+%   U (cell): A cell in which U{m+1} are the m level scattering
 %       coefficients of a 2D signal, computed with the scatnet light 
 %       software. U can only have zero, one, or two layers.
 %   scat_type (string): t/tr/tr_nonsepa
 %   p (integer): Computes the pth moment (default: p=1)
 %
 % Output
-%   EU (cell): A cell in which EU{m+1} are the m level expected roto 
+%   EU (cell): A cell in which EU{m+1} are the m level expected (mean) 
 %       scattering coefficients of a 2D signal.
 %
 % Description
@@ -42,7 +42,6 @@ for i=1:num_sig
     EU{1}.signal(i,1) = (2^(-p*U{1}.meta.resolution(1)))*mean(sig(:).^p);
 end
 EU{1}.meta.j = U{1}.meta.j;
-EU{1}.meta.q = U{1}.meta.q;
 EU{1}.meta.resolution = U{1}.meta.resolution;
 EU{1}.meta.layer = 0;
 EU{1}.meta.moment = p;
