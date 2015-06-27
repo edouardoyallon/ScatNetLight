@@ -58,8 +58,18 @@ if nargin < 2
 end
 
 % Scattering options
-scat_opt = fill_struct(scat_opt, 'M', 2);
-scat_opt = fill_struct(scat_opt, 'type', 't');
+if isfield(scat_opt,'layer')
+    scat_opt = fill_struct(scat_opt, 'M', length(scat_opt.layer)-1);
+    scat_opt = fill_struct(scat_opt, 'type', 't');
+else
+    scat_opt = fill_struct(scat_opt, 'M', 1);
+    scat_opt = fill_struct(scat_opt, 'type', 't');    
+    scat_opt.layer = cell(1,scat_opt.M+1);
+    for m=1:scat_opt.M+1
+        scat_opt.layer{m}.translation = [];
+        scat_opt.layer{m}.rotation = [];
+    end
+end
 
 % Build the operator for each layer
 Wop = cell(1,scat_opt.M+1);
