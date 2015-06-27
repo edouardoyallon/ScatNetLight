@@ -135,6 +135,7 @@ end
 % Format output
 filters.phi = phi;
 filters.psi = psi;
+filters.meta.wavelet = 'Morlet';
 filters.meta.J = J;
 filters.meta.n_wavelet_per_octave = Q;
 filters.meta.base_mesh = options.base_mesh;
