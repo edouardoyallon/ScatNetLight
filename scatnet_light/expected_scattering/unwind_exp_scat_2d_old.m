@@ -1,11 +1,11 @@
-% UNWIND_EXP_SCAT_2D
+% UNWIND_EXP_SCAT_2D_OLD
 % Unwinds the expected scattering coefficients to be used in regression 
 %   tasks. Also returns the scattering names and parameters for the unwound
 %   matrix.
 %
 % Usage:
-%   [X, coeff_names, coeff_pars] = UNWIND_EXP_SCAT_2D(EU1, scat_type)
-%   [X, coeff_names, coeff_pars] = UNWIND_EXP_SCAT_2D(EU1, EU2, scat_type)
+%   [X, coeff_names, coeff_pars] = UNWIND_EXP_SCAT_2D_OLD(EU1, scat_type)
+%   [X, coeff_names, coeff_pars] = UNWIND_EXP_SCAT_2D_OLD(EU1, EU2, scat_type)
 %
 % Inputs:
 %   1.) EU1 (cell): L1 expected scattering output
@@ -26,7 +26,7 @@
 % Author: Matthew Hirn
 % email: matthew.hirn@ens.fr
 
-function [X, coeff_names, coeff_pars] = unwind_exp_scat_2d(EU1, varargin)
+function [X, coeff_names, coeff_pars] = unwind_exp_scat_2d_old(EU1, varargin)
 
 % Variable inputs
 if length(varargin) == 1
