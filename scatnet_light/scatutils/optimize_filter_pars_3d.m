@@ -32,32 +32,23 @@ end
 
 function ratio = LP(N,J,base_mesh,n_sub_sphere,Q,xi,zeta)
 
-% --- Global scattering settings ---
-scat_opt.M = 0;
-scat_opt.type = 't';
-
-% --- First layer ---
-
-% Scattering
-scat_opt.layer{1}.translation.oversampling = 0;
-scat_opt.layer{1}.translation.boundary = 'zero';
-
-% Filter settings
-filt_opt.layer{1}.translation.J = J;
-filt_opt.layer{1}.translation.n_wavelet_per_octave = Q;
-filt_opt.layer{1}.translation.base_mesh = base_mesh;
-filt_opt.layer{1}.translation.n_subdivision_sphere = n_sub_sphere;
-filt_opt.layer{1}.translation.antipodal = true;
-filt_opt.layer{1}.translation.sigma_phi = 0.8;
-filt_opt.layer{1}.translation.sigma_psi = 0.8;
-filt_opt.layer{1}.translation.xi_psi = xi;
-filt_opt.layer{1}.translation.slant_psi = zeta;
+% Filter options
+filt_opt.translation.filter_type = 'morlet';
+filt_opt.translation.J = J;
+filt_opt.translation.n_wavelet_per_octave = Q;
+filt_opt.translation.base_mesh = base_mesh;
+filt_opt.translation.n_subdivision_sphere = n_sub_sphere;
+filt_opt.translation.antipodal = true;
+filt_opt.translation.sigma_phi = 0.8;
+filt_opt.translation.sigma_psi = 0.8;
+filt_opt.translation.xi_psi = xi;
+filt_opt.translation.slant_psi = zeta;
 
 % Create filter bank
-[~, filters] = wavelet_factory_3d([N N N], filt_opt, scat_opt);
+filters = filters_factory_3d([N N N], filt_opt);
 
 % Littlewood Paley
-lwp = littlewood_paley(filters{1}.translation);
+lwp = littlewood_paley(filters.translation);
 lwp = fftshift(lwp);
 x = 1:size(lwp,1);
 y = 1:size(lwp,2);
