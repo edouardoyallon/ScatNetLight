@@ -38,9 +38,10 @@ scat_opt = fill_struct(scat_opt, 'M', 2);
 Wop=cell(scat_opt.M+1,1);
 
 % Build the operator for each layer
+filters = cell(1,scat_opt.M+1);
 for m = 1:scat_opt.M+1
     % Check options
-    white_list_scat_layer_translation = { 'oversampling','M','type','padding'};
+    white_list_scat_layer_translation = {'oversampling','M','type','padding'};
     check_options_white_list(scat_opt.layer{m}.translation, white_list_scat_layer_translation);
     
     % Create filters for translation

@@ -10,7 +10,7 @@ Software used in the paper:
 Deep Roto-Translation Scattering for Object Classification, Edouard Oyallon, Stéphane Mallat, accepted to CVPR 2015, http://arxiv.org/abs/1412.8659
 
 Author contact: Edouard Oyallon, edouard.oyallon@ens.fr
-Contributor: Matthew Hirn
+Contributor: Matthew Hirn, matthew.hirn@ens.fr
 
 
 Install ScatNetLight + Classification pipeline

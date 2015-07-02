@@ -17,28 +17,46 @@
 %    PLOT_LITTLEWOOD_PALEY_1D, DISPLAY_LITTLEWOOD_PALEY_2D, FILTER_BANK
 
 function energy = littlewood_paley(filters,N)
-	if nargin < 2
-		N = [];	
-	end
-	
-	if isempty(N) && isfield(filters,'meta') && isfield(filters.meta,'size_filter')
-		N = filters.meta.size_filter;
-	else
-		error('Unable to find max filter size!');
-	end
-	
-	if length(N) == 1
-		N = [N 1];
-	end
 
-	energy = zeros(N);
-	for p = 1:length(filters.psi.filter)
-		filter_coefft = realize_filter(filters.psi.filter{p},N);
-		energy = energy + abs(filter_coefft.^2);
-	end
+% Optional input
+if nargin < 2
+    N = [];
+end
 
-	energy = 0.5*(energy + circshift(rot90(energy,2), [1, 1]));
+% Max filter size if no inputted N
+if isempty(N) && isfield(filters,'meta') && isfield(filters.meta,'size_filter')
+    N = filters.meta.size_filter;
+else
+    error('Unable to find max filter size!');
+end
 
-	filter_coefft = realize_filter(filters.phi.filter,N);
-	energy = energy + abs(filter_coefft.^2);
+% For 1D
+if length(N) == 1
+    N = [N 1];
+end
+
+% Add up energies of the wavelets
+energy = zeros(N);
+for p = 1:length(filters.psi.filter)
+    if length(N) < 3
+        filter_coefft = realize_filter(filters.psi.filter{p},N);
+    else
+        filter_coefft = filters.psi.filter{p}.coefft{1};
+    end
+    energy = energy + abs(filter_coefft.^2);
+end
+
+% If 1D or 2D, get energy in negative frequencies 
+if length(N) < 3
+    energy = 0.5*(energy + circshift(rot90(energy,2), [1, 1]));
+end
+
+% Low pass energy
+if length(N) < 3
+    filter_coefft = realize_filter(filters.phi.filter,N);
+else
+    filter_coefft = filters.phi.filter.coefft{1};
+end
+energy = energy + abs(filter_coefft.^2);
+
 end
