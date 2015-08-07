@@ -30,7 +30,7 @@ Quickstarts
 
 See 'quick_tutorial.m' in the main folder or the 'tutorial' folder in scatnet_light.
 
-You will have to modify the function 'create_config_caltech_101', 'create_config_caltech_256', 'create_config_cifar_10' and 'create_config_cifar_100'. The dataset will also have to be downloaded and put in separate folders. The software is outputting intermediary features that can take a consequent size on a harddriver. Also, a server with at least 256go of memory is recommended for most of the experiments, if you want to use the dimensionality reduction algorithm.(it can be removed by setting option.Classification.nAverageKernel equal to -1)
+You will have to modify the function 'create_config_caltech_101', 'create_config_caltech_256', 'create_config_cifar_10' and 'create_config_cifar_100'. The dataset will also have to be downloaded and put in separate folders. The software is outputting intermediary features that can take a consequent size on a harddriver. Also, a server with at least 256go of memory is recommended for most of the experiments, if you want to use the dimensionality reduction algorithm.(it can be removed by setting option.Classification.nAverageKernel and option.Classification.D equal to -1)
 
 Copyright
 ----------
