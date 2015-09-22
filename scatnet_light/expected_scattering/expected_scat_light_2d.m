@@ -3,7 +3,7 @@
 %   from ScatNet Light.
 %
 % Usage
-%   EU = EXPECTED_SCAT_LIGHT_ROTO_2D(U,scat_type,p)
+%   EU = EXPECTED_SCAT_LIGHT_2D(U,scat_type,p)
 %
 % Input
 %   U (cell): A cell in which U{m+1} are the m level scattering
