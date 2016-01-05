@@ -1,13 +1,13 @@
 % WAVELET_OPERATOR_3D
-% Creates the function handle of the 3D wavelet operator only. Does not
+% Creates the function handle of the 2D wavelet operator only. Does not
 % create the wavelet filters, they must be inputted.
 %
 % Usage:
-%   [Wop, scat_opt_out] = WAVELET_OPERATOR_3D(filters, scat_opt_in)
+%   [Wop, scat_opt_out] = WAVELET_OPERATOR_2D(filters, scat_opt_in)
 %
 % Inputs:
 %   1.) filters (struct): The wavelet filters, as outputted by 
-%       FILTERS_FACTORY_3D.
+%       FILTERS_FACTORY_2D.
 %   2.) scat_opt_in (struct): The scattering options, with the following
 %       fields:
 %       a.) M (integer): The number of scattering layers. Max is 2.
@@ -24,13 +24,13 @@
 %               increase the sampling rate by a factor of 2^oversampling.
 %
 % See also:
-%   FILTERS_FACTORY_3D, SCAT
+%   FILTERS_FACTORY_2D, SCAT
 %
 % This file is part of ScatNetLight.
-% Authors: Matthew Hirn and Guy Wolf
-% email: matthew.hirn@ens.fr, guy.wolf@ens.fr
+% Authors: Matthew Hirn
+% email: mhirn@msu.edu
 
-function [Wop, scat_opt_out] = wavelet_operator_3d(filters, scat_opt_in)
+function [Wop, scat_opt_out] = wavelet_operator_2d(filters, scat_opt_in)
 
 % Optional inputs
 if nargin < 2
@@ -46,7 +46,7 @@ scat_opt_out = fill_struct(scat_opt_out, 'translation', []);
 scat_opt_out.translation = fill_struct(scat_opt_out.translation, 'boundary', 'zero');
 scat_opt_out.translation = fill_struct(scat_opt_out.translation, 'oversampling', 0);
 
-% At the moment, we can only do translation scattering in 3D
+% At the moment, I have only implemented translation scattering 
 if ~strcmpi(scat_opt_out.type,'t')
     error('Unsupported scattering type.');
 end
@@ -55,16 +55,16 @@ end
 switch scat_opt_out.M
     
     case 0
-        Wop{1} = @(x)(wavelet_layer_1_3d(x, filters.translation, scat_opt_out.translation));
+        Wop{1} = @(x)(wavelet_layer_1_2d(x, filters.translation, scat_opt_out.translation));
         
     case 1
-        Wop{1} = @(x)(wavelet_layer_1_3d(x, filters.translation, scat_opt_out.translation));
-        Wop{2} = @(x)(wavelet_layer_1_3d(x, filters.translation, scat_opt_out.translation));
+        Wop{1} = @(x)(wavelet_layer_1_2d(x, filters.translation, scat_opt_out.translation));
+        Wop{2} = @(x)(wavelet_layer_1_2d(x, filters.translation, scat_opt_out.translation));
         
     case 2
-        Wop{1} = @(x)(wavelet_layer_1_3d(x, filters.translation, scat_opt_out.translation));
-        Wop{2} = @(x)(wavelet_layer_2_3d(x, filters.translation, scat_opt_out.translation));
-        Wop{3} = @(x)(wavelet_layer_2_3d(x, filters.translation, scat_opt_out.translation));
+        Wop{1} = @(x)(wavelet_layer_1_2d(x, filters.translation, scat_opt_out.translation));
+        Wop{2} = @(x)(wavelet_layer_2_2d(x, filters.translation, scat_opt_out.translation));
+        Wop{3} = @(x)(wavelet_layer_2_2d(x, filters.translation, scat_opt_out.translation));
         
     otherwise
         error('3D scattering only supports up to 2 layers.');

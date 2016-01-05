@@ -4,7 +4,7 @@
 %
 % Usage:
 %   batch_ind = CREATE_BATCH_IND(num_per_batch, total_num)
-%   batch_ind = CREATE_BATCH_IND(num_per_batch, total_num, X)
+%   [batch_ind, X_batch] = CREATE_BATCH_IND(num_per_batch, total_num, X)
 %
 % Inputs:
 %   1.) num_per_batch (numeric): Number data points per batch.
@@ -14,6 +14,12 @@
 % Outputs:
 %   1.) batch_ind (cell): 1xM cell where M is the number of batches. Each
 %       cell contains the indices of the batch.
+%   2.) X_batch (cell): 1xM cell where M is the number of batches. Each
+%       cell contains the entries of X in that particular batch.
+%
+% This file is part of ScatNetLight.
+% Authors: Matthew Hirn
+% email: mhirn@msu.edu
 
 function [batch_ind, X_batch] = create_batch_ind(num_per_batch, total_num, X)
 
