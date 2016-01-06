@@ -1,8 +1,9 @@
-% WAVELET_OPERATOR_3D
+% WAVELET_OPERATOR_2D
 % Creates the function handle of the 2D wavelet operator only. Does not
 % create the wavelet filters, they must be inputted.
 %
 % Usage:
+%   Wop = WAVELET_OPERATOR_2D(filters, scat_opt_in)
 %   [Wop, scat_opt_out] = WAVELET_OPERATOR_2D(filters, scat_opt_in)
 %
 % Inputs:
@@ -43,7 +44,7 @@ end
 scat_opt_out = fill_struct(scat_opt_out, 'M', 1);
 scat_opt_out = fill_struct(scat_opt_out, 'type', 't');
 scat_opt_out = fill_struct(scat_opt_out, 'translation', []);
-scat_opt_out.translation = fill_struct(scat_opt_out.translation, 'boundary', 'zero');
+scat_opt_out.translation = fill_struct(scat_opt_out.translation, 'padding', 'zero');
 scat_opt_out.translation = fill_struct(scat_opt_out.translation, 'oversampling', 0);
 
 % At the moment, I have only implemented translation scattering 
@@ -67,7 +68,7 @@ switch scat_opt_out.M
         Wop{3} = @(x)(wavelet_layer_2_2d(x, filters.translation, scat_opt_out.translation));
         
     otherwise
-        error('3D scattering only supports up to 2 layers.');
+        error('2D scattering only supports up to 2 layers.');
         
 end
 
