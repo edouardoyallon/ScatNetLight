@@ -87,7 +87,7 @@ for i=1:num_sets
     if M > 0
         for j=1:length(EU{i}{2}.meta.j)
             coeff_names{counter} = strcat('L',num2str(p),'^',num2str(p),...
-                '_m=0_j1=',num2str(EU{i}{2}.meta.j(j)));
+                '_m=1_j1=',num2str(EU{i}{2}.meta.j(j)));
             coeff_pars.m(counter) = 1;
             coeff_pars.j1(counter) = EU{i}{2}.meta.j(j);
             coeff_pars.j2(counter) = -1;
