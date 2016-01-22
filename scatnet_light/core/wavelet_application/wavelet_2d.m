@@ -27,19 +27,28 @@
 %   CONV_SUB_2D
 
 function [x_phi, x_psi, meta_phi, meta_psi] = wavelet_2d(x, filters, options)
+    
     % Options
     if(nargin<3)
         options = struct;
     end
     
-    white_list = {'x_resolution','psi_mask','oversampling','type','padding'};
+    % Check white list, fill in options
+    white_list = {'x_resolution', ...
+                  'psi_mask', ...
+                  'oversampling', ...
+                  'type', ...
+                  'padding', ...
+                  'compute_low_pass'};
     check_options_white_list(options, white_list);
     options = fill_struct(options, 'x_resolution', 0);
     options = fill_struct(options, 'oversampling', 1);
     options = fill_struct(options, 'psi_mask', ...
         ones(1,numel(filters.psi.filter)));
     options = fill_struct(options, 'padding', 'symm');
+    options = fill_struct(options, 'compute_low_pass', true);
     
+    % Initialization
     oversampling = options.oversampling;
     psi_mask = options.psi_mask;
     bdry = options.padding;
@@ -51,18 +60,24 @@ function [x_phi, x_psi, meta_phi, meta_psi] = wavelet_2d(x, filters, options)
     end
     
     % Padding and Fourier transform
-    sz_paded = filters.meta.size_filter / 2^options.x_resolution;
-    xf = fft2(pad_signal(x, sz_paded, bdry, center_sig));
+    if options.compute_low_pass || numel(find(psi_mask)) > 0
+        sz_paded = filters.meta.size_filter / 2^options.x_resolution;
+        xf = fft2(pad_signal(x, sz_paded, bdry, center_sig));
+    end
 
-    % Low-pass filtering, downsampling and unpadding 
-    J = filters.phi.meta.J;
-    ds = max(floor(J)- options.x_resolution - oversampling, 0);
-    x_phi = real(conv_sub_2d(xf, filters.phi.filter, ds));
-    x_phi = unpad_signal(x_phi, ds*[1 1], size(x), center_sig);
+    % Low-pass filtering, downsampling and unpadding
+    x_phi = [];
+    meta_phi = struct();
+    if options.compute_low_pass
+        J = filters.phi.meta.J;
+        ds = max(floor(J)- options.x_resolution - oversampling, 0);
+        x_phi = real(conv_sub_2d(xf, filters.phi.filter, ds));
+        x_phi = unpad_signal(x_phi, ds*[1 1], size(x), center_sig);
     
-    meta_phi.j = -1;
-    meta_phi.theta = -1;
-    meta_phi.resolution = options.x_resolution + ds;
+        meta_phi.j = -1;
+        meta_phi.theta = -1;
+        meta_phi.resolution = options.x_resolution + ds;
+    end
     
     % Band-pass filtering, downsampling and unpadding
     x_psi=cell(1,numel(find(psi_mask)));
