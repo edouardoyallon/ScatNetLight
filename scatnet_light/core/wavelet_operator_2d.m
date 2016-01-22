@@ -46,6 +46,7 @@ scat_opt_out = fill_struct(scat_opt_out, 'type', 't');
 scat_opt_out = fill_struct(scat_opt_out, 'translation', []);
 scat_opt_out.translation = fill_struct(scat_opt_out.translation, 'padding', 'zero');
 scat_opt_out.translation = fill_struct(scat_opt_out.translation, 'oversampling', 0);
+scat_opt_out.translation = fill_struct(scat_opt_out.translation, 'compute_low_pass', true);
 
 % At the moment, I have only implemented translation scattering 
 if ~strcmpi(scat_opt_out.type,'t')
