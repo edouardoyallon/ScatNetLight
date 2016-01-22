@@ -38,6 +38,7 @@ function [U_phi, U_psi] = wavelet_layer_2_2d(U, filters, options)
     L=filters.meta.L;
     
     p2 = 1;
+    U_phi = struct();
     for p = 1:numel(U.signal)
         x = U.signal{p};
         if (numel(U.meta.j)>0)
@@ -57,9 +58,11 @@ function [U_phi, U_psi] = wavelet_layer_2_2d(U, filters, options)
         [x_phi, x_psi, meta_phi, meta_psi] = wavelet_2d(x, filters, options);
         
         % copy signal and meta for phi
-        U_phi.signal{p} = x_phi;
-        U_phi.meta.j(:,p) = [U.meta.j(:,p); filters.phi.meta.J];
-        U_phi.meta.resolution(1,p) = meta_phi.resolution;
+        if options.compute_low_pass
+            U_phi.signal{p} = x_phi;
+            U_phi.meta.j(:,p) = [U.meta.j(:,p); filters.phi.meta.J];
+            U_phi.meta.resolution(1,p) = meta_phi.resolution;
+        end
         
         % copy signal and meta for psi
         for p_psi = find(options.psi_mask)
