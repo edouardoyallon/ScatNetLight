@@ -21,7 +21,7 @@
 %
 %   1.) atom_ind (numeric): The indices of the atoms selected from Phi.
 %
-% Author: Matthew Hirn
+% Author: Matthew Hirn (mhirn@msu.edu)
 % Slightly optimized by Edouard Oyallon
 
 function atom_ind = ols(f,Phi,M,option_repeat)
