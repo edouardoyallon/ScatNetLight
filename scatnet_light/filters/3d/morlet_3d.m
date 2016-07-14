@@ -16,7 +16,6 @@
 %       have radial symmetry about angle_axis.
 %
 % Outputs:
-%
 %   1.) psi (numeric): A matrix of size N representing the Morlet wavelet
 %       in the spatial domain.
 %
