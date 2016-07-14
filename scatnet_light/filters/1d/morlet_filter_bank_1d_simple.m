@@ -84,4 +84,24 @@ for j=0:(J-1)
     end
 end
 
+% Renormalize psi by max of Littlewood Paley to have an almost unitary
+% operator.
+K = max(littlewood_paley(:));
+for p=1:(J*Q)
+    psi.filter{p} = psi.filter{p}/sqrt(K/2);
+    psi.filter{p} = periodize_filter_3d(psi.filter{p});
+end
+
+% Format output
+filters.phi = phi;
+filters.psi = psi;
+filters.meta.wavelet = 'Morlet';
+filters.meta.J = J;
+filters.meta.n_wavelet_per_octave = Q;
+filters.meta.sigma_phi = sigma_phi;
+filters.meta.sigma_psi = sigma_psi;
+filters.meta.xi_psi = xi_psi;
+filters.meta.size_in = N;
+filters.meta.size_filter = size_filter;
+
 end
