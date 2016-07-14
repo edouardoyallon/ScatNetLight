@@ -45,7 +45,7 @@ switch lower(filt_opt.translation.filter_type)
     case 'morlet'
         filters.translation = morlet_filter_bank_3d(size_in, filt_opt.translation);
     otherwise
-        error('Usupported filter type.');
+        error('Unsupported filter type.');
 end
 
 end
