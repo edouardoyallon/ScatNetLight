@@ -58,8 +58,30 @@ size_filter = pad_size(N, options.min_margin, J);
 scale = 2^(J-1);
 filter_spatial = gaussian_1d(size_filter, sigma_phi*scale);
 filter_spatial = fftshift(filter_spatial);
+phi = struct;
 phi.filter = single(real(fft(filter_spatial)));
 phi.filter = periodize_filter_3d(phi.filter);
 phi.meta.J = J;
+
+% Compute the wavelet filters psi
+psi = struct;
+psi.filter = cell(1,J*Q);
+psi.meta.j = zeros(1,J*Q);
+littlewood_paley = zeros(size_filter);
+p = 1;
+for j=0:(J-1)
+    for q=0:(Q-1)
+        scale = 2^(j+q/Q);
+        filter_spatial = morlet_1d(size_filter, sigma_psi*scale, xi_psi/scale);
+        filter_spatial = fftshift(filter_spatial);
+        
+        psi.filter{p} = single(real(fft3(filter_spatial)));
+        psi.meta.j(p) = j + q/Q;
+        
+        littlewood_paley = littlewood_paley + abs(psi.filter{p}).^2;
+        
+        p = p + 1;
+    end
+end
 
 end
