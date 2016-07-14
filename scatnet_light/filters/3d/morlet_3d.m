@@ -49,7 +49,7 @@ Rz = reshape(Rz,N);
 % Gaussian part
 g = exp(-(Rx.^2 + Ry.^2 + (Rz/slant).^2)/(2*sigma^2));
 
-% Oscillating part
+% Gaussian modulated oscillating wave
 o = g .* exp(1i*xi*Rz);
 
 % Morlet wavelet with zero average
