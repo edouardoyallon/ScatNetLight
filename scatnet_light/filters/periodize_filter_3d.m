@@ -39,6 +39,13 @@ function filter = periodize_filter_3d(filter_f)
 N = size(filter_f);
 N = N(N>1);
 
+% If filter_f 1D, needs to be a column vector
+if length(N) == 1
+    if size(filter_f, 2) > size(filter_f, 1)
+        filter_f = filter_f.';
+    end
+end
+
 % Initialize multiresolution filter
 filter.type = 'fourier_multires';
 filter.N = N;
