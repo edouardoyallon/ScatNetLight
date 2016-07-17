@@ -21,7 +21,7 @@ filt_opt.sigma_phi = 0.8;
 filt_opt.sigma_psi = 0.8;
 
 % Create filters
-filters = filter_factory_1d(N, filt_opt);
+filters = filters_factory_1d(N, filt_opt);
 
 % === Wavelet operator and scattering options ===
 
