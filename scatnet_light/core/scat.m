@@ -5,8 +5,13 @@
 %
 % Input
 %    x (numeric): The input signal.
-%    Wop (cell of function handles): Linear operators used to generate a new 
-%       layer from the previous one.
+%    Wop (cell of function handles OR struct): Linear operators used to 
+%       generate a new layer from the previous one. Wop can take two
+%       formats:
+%       a.) cell: Each Wop{m} propogates layer m-1 to layer m.
+%       b.) struct: Wop has two fields:
+%           i.)  Wop.function_handle: Propogates all layers.
+%           ii.) Wop.num_layers: The number of layers to propogate.
 %
 % Output
 %    S (cell): The scattering representation of x.
@@ -18,7 +23,7 @@
 %    coefficients U. 
 %
 %    Each element of the Wop array is a function handle of the signature
-%       [A, V] = Wop{m+1}(U),
+%       [A, V] = Wop{m+1}(U)   OR    [A, V] = Wop.function_handle(U)
 %    where m ranges from 0 to M (M being the order of the transform). The 
 %    outputs A and V are the invariant and covariant parts of the operator.
 %
@@ -31,6 +36,9 @@
 %    the input signal x, then iterates on the following transformation
 %       [S{m+1}, V] = Wop{m+1}(U{m+1});
 %       U{m+2} = modulus_layer(V);
+%    or alternatively:
+%       [S{m+1}, V] = Wop.function_handle(U{m+1});
+%       U{m+2} = modulus_layer(V);
 %    The invariant part of the linear operator is therefore output as a scat-
 %    tering coefficient, and the modulus covariant part V is assigned to the 
 %    next layer of U.
@@ -39,10 +47,17 @@
 %   WAVELET_FACTORY_1D, WAVELET_FACTORY_2D, WAVELET_FACTORY_2D_PYRAMID
 
 function [S, U] = scat(x, Wop)
+    
     % Initialize future cell
-    % FUTURE: Faster initialization
-    U=cell(1,length(Wop));
-    S=cell(1,length(Wop));
+    if iscell(Wop)
+        U = cell(1, length(Wop));
+        S = cell(1, length(Wop));
+        M = length(Wop) - 1;
+    else
+        U = cell(1, Wop.num_layers + 1);
+        S = cell(1, Wop.num_layers + 1);
+        M = Wop.num_layers;
+    end
     
 	% Initialize signal and meta
 	U{1}.signal{1} = x;
@@ -51,12 +66,20 @@ function [S, U] = scat(x, Wop)
     U{1}.meta.resolution=0;
 
 	% Apply scattering, order per order
-	for m = 0:numel(Wop)-1
-        if (m < numel(Wop)-1)
-			[S{m+1}, V] = Wop{m+1}(U{m+1});
+	for m = 0:M
+        if (m < M)
+            if iscell(Wop)
+                [S{m+1}, V] = Wop{m+1}(U{m+1});
+            else
+                [S{m+1}, V] = Wop.function_handle(U{m+1});
+            end
 			U{m+2} = modulus_layer(V);
-		else
-			S{m+1} = Wop{m+1}(U{m+1});
+        else
+            if iscell(Wop)
+                S{m+1} = Wop{m+1}(U{m+1});
+            else
+                S{m+1} = Wop.function_handle(U{m+1});
+            end
         end
 	end
 end
