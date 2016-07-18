@@ -10,15 +10,22 @@
 % === Filters ===
 
 % Length of the signal
-N = 2^7;
+N = 2^9;
 
 % Filter options
 filt_opt.filter_type = 'morlet';
-filt_opt.translation.J = log2(N);
-filt_opt.n_wavelet_per_octave = 2;
+filt_opt.J = log2(N);
+filt_opt.n_wavelet_per_octave = 1;
 filt_opt.xi_psi = 3*pi/4;
-filt_opt.sigma_phi = 0.34; % 0.30 (Q=1); 0.34 (Q=2); 
 filt_opt.sigma_psi = 0.8;
+switch filt_opt.n_wavelet_per_octave % These are set to approximately optimize the Littlewood-Paley condition for J=log2(N) when including the low pass
+    case 1
+        filt_opt.sigma_phi = 0.30; 
+    case 2
+        filt_opt.sigma_phi = 0.40;
+    otherwise
+        filt_opt.sigma_phi = 0.40;
+end
 
 % Create filters
 filters = filters_factory_1d(N, filt_opt);
