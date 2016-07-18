@@ -55,8 +55,9 @@ xi_psi     = options.xi_psi;
 size_filter = pad_size(N, options.min_margin, J);
 
 % Compute low pass filter phi at all resolutions (fourier_multires)
-scale = 2^(J-1);
+scale = 2^J;
 filter_spatial = gaussian_1d(size_filter, sigma_phi*scale);
+filter_spatial = (1/sum(filter_spatial)) * filter_spatial;
 filter_spatial = fftshift(filter_spatial);
 phi = struct;
 phi.filter = single(real(fft(filter_spatial)));
@@ -88,7 +89,7 @@ end
 % operator.
 K = max(littlewood_paley(:));
 for p=1:(J*Q)
-    psi.filter{p} = psi.filter{p}/sqrt(K/2);
+    psi.filter{p} = psi.filter{p}/sqrt(K);
     psi.filter{p} = periodize_filter_3d(psi.filter{p});
 end
 
