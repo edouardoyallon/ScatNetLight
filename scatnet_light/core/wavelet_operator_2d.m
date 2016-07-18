@@ -17,12 +17,19 @@
 %       c.) translation (struct): Sub-struct containing options specific to
 %           the translation part of the scattering transform. Fields within
 %           translation are:
-%           i.)  boundary (string): The type of boundary condition (i.e.,
-%                the way the signal is padded). Can be either 'zero',
-%                'symm', or 'per'.
-%           ii.) oversampling (integer): The signals by default are
-%               downsampled at the critical sampling rate. This will
-%               increase the sampling rate by a factor of 2^oversampling.
+%           i.)   boundary (string): The type of boundary condition (i.e.,
+%                 the way the signal is padded). Can be either 'zero',
+%                 'symm' (symmetric), or 'per' (periodic).
+%           ii.)  oversampling (integer): The signals by default are
+%                 downsampled at the critical sampling rate. This will
+%                 increase the sampling rate by a factor of 2^oversampling.
+%           iii.) compute_low_pass (boolean): If true, after each 
+%                 propogation layer U (wavelet modulus operator), a low 
+%                 pass filter is applied giving a translation invariant 
+%                 scattering representation up to the specified scale. If 
+%                 false, no low pass filter is applied and only the 
+%                 propogator coefficients (i.e., the cascaded wavelet 
+%                 modulus operator) at each layer are returned. 
 %
 % See also:
 %   FILTERS_FACTORY_2D, SCAT

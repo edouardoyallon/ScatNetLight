@@ -18,7 +18,7 @@
 %           translation are:
 %           i.)  boundary (string): The type of boundary condition (i.e.,
 %                the way the signal is padded). Can be either 'zero',
-%                'symm', or 'per'.
+%                'symm' (symmetric), or 'per' (periodic).
 %           ii.) oversampling (integer): The signals by default are
 %               downsampled at the critical sampling rate. This will
 %               increase the sampling rate by a factor of 2^oversampling.
