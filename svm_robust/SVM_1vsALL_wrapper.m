@@ -35,8 +35,8 @@ option_svm=['-s 0 -t 4 -q -c ' num2str(C)];
 
   model=cell(numel(index_of_class),1);
   decision=zeros(numel(index_of_class),numel(class_test),'single');
-  s=matlabpool('size');
-parfor k=1:numel(index_of_class)%c=index_of_class
+
+for k=1:numel(index_of_class)%c=index_of_class
 %     t=getCurrentTask();
 %     t=t.ID;
 %     pause(min(5*s*t));
@@ -78,7 +78,7 @@ end
 %    bias(k,:)=-sign_decision(k)*model{k}.rho;
 %     end
 % end
-% 
+%   s=matlabpool('size');
 % if(isOk)
 % support_vector.w=w;
 % support_vector.bias=bias;

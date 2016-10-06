@@ -60,5 +60,5 @@
 % crossvalidate because the OLS algorithm is SLOW.
 
 % Example of usage:
-option=create_config_cifar10('my_server')
+option=create_config_cifar_10('carmine')
 scatnet_representation_main

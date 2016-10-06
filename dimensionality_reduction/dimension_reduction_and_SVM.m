@@ -49,16 +49,7 @@ for step_run=1:N
     % end
     if(D>0)
         
-         %Limit number of threads because of complicated memory issues
-    s=matlabpool('size');
-    if(s==0)
-        matlabpool open
-    end
-    if(s~=T_dim_red && T_dim_red>0)
-        matlabpool close
-        matlabpool('local',T_dim_red);
-    end
-        
+
         
         outputTrainData=zeros([D*nAverageKernel*numel(unique(labels_train)),size(trainingData,2)],'single');
         outputTestData=zeros([D*nAverageKernel*numel(unique(labels_train)),size(testingData,2)],'single');
@@ -91,16 +82,7 @@ for step_run=1:N
     [kernel_train,kernel_test]=prepare_kernel_for_svm(kernel_train,kernel_test);% Simple software for libsvm
     
     fprintf('\nNow going into the svm...\n')
-    
-    s=matlabpool('size');
-    if(s~=T_classif)
-        if(s==0)
-            matlabpool('local',T_classif);
-        else
-            matlabpool close
-            matlabpool('local',T_classif);
-        end
-    end
+   
     % Gives confusion_matrix
     [confusion_matrix]=SVM_1vsALL_wrapper(labels_train,labels_test, kernel_train,kernel_test,C);score_function(confusion_matrix)
     res(step_run)=score_function(confusion_matrix);

@@ -1,9 +1,9 @@
-% This is the main script to compute a scattering representation, given
+ % This is the main script to compute a scattering representation, given
 % options.
 
 % If set to 1, this variable recomputes precomputed features for a given
 % option.
-recompute=0;
+recompute=1;
 
 % Clear every previous batch of the works
 clear jobs
@@ -31,7 +31,7 @@ fprintf('Batch...\n');
 createjobfolder(option,mergestruct(option.Exp,option.Layers));
 
 tic % We compute the scattering features
-parfor i=1:length(jobs)
+for i=1:length(jobs)
     nameJobFile=getnamejobfile(option,i,mergestruct(option.Exp,option.Layers));
     if ~exist(nameJobFile, 'file') || recompute
         for j=1:length(jobs{i})
@@ -60,7 +60,7 @@ parfor i=1:length(jobs)
             
             
             if(option.Layers.color==1)
-                S_y=scat(imy,Wop);
+                S_y, U_y=scat(imy,Wop);
                 S_u=scat(imu,Wop_color);
                 S_v=scat(imv,Wop_color);
                 S_y_coeff=format_scat(S_y,'order_table');
