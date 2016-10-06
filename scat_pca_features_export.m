@@ -1,5 +1,6 @@
- % This is the main script to compute a scattering representation, given
-% options.
+load_path_software
+option=create_config_cifar_10('carmine')
+
 
 % If set to 1, this variable recomputes precomputed features for a given
 % option.
@@ -31,7 +32,7 @@ fprintf('Batch...\n');
 createjobfolder(option,mergestruct(option.Exp,option.Layers));
 
 tic % We compute the scattering features
-parfor i=1:length(jobs)
+for i=1:length(jobs)
     nameJobFile=getnamejobfile(option,i,mergestruct(option.Exp,option.Layers));
     if ~exist(nameJobFile, 'file') || recompute
         for j=1:length(jobs{i})
@@ -48,7 +49,7 @@ parfor i=1:length(jobs)
                 yYUV(:,:,3)=0;
                 yYUV=single(yYUV);
             else
-                yYUV =single(rgb2yuv(imageData))               
+                yYUV =single(rgb2yuv(imageData));               
             end
             imy=yYUV(:,:,1);
             imu=yYUV(:,:,2);
@@ -60,9 +61,9 @@ parfor i=1:length(jobs)
             
             
             if(option.Layers.color==1)
-                S_y=scat(imy,Wop);
-                S_u=scat(imu,Wop_color);
-                S_v=scat(imv,Wop_color);
+                [S_y, U_y] =scat(imy,Wop);
+                [S_u, U_u] =scat(imu,Wop_color);
+                [S_v, U_v] =scat(imv,Wop_color);
                 S_y_coeff=format_scat(S_y,'order_table');
                 S_u_coeff=format_scat(S_u,'order_table');
                 S_v_coeff=format_scat(S_v,'order_table');
@@ -70,13 +71,17 @@ parfor i=1:length(jobs)
                 S_u_coeff=[S_u_coeff{1}(:);S_u_coeff{2}(:);S_u_coeff{3}(:)];
                 S_v_coeff=[S_v_coeff{1}(:);S_v_coeff{2}(:);S_v_coeff{3}(:)];
                 S_coeff=[S_y_coeff;S_u_coeff;S_v_coeff];
+                U_coeff{1} = U_v; U_coeff{2} = U_u; U_coeff{2} = U_y;
             else
-                S_y=scat(imy,Wop);
+                [S_y, U_y]=scat(imy,Wop);
                 S_y_coeff=format_scat(S_y,'order_table');
                 S_y_coeff=[S_y_coeff{1}(:);S_y_coeff{2}(:);S_y_coeff{3}(:)];
                 S_coeff=[S_y_coeff];
+                U_coeff{1} = U_y;
             end
 
+            U_features{j} = U_coeff;
+            disp(nameJobFile)
             if(j==1)
                 scatteringFeature=zeros([length(jobs{i}),numel(S_coeff)],'single');
             end         
@@ -89,6 +94,8 @@ end
 fprintf(' .');
 
 timeScat=toc;
+
+savemat('U_features_CIFAR10.mat', 'U_features')
 
 if(recompute)
     fprintf('(recomputed)');
@@ -129,5 +136,3 @@ if recompute
     scattering_representation=standardize_feature(scattering_representation);
 end
 
-% Reduce dimension + Classification framework
-dimension_reduction_and_SVM
