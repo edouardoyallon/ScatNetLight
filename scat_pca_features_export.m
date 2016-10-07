@@ -55,7 +55,7 @@ for i=1:length(jobs)
             [~, U_y] =scat(imy,Wop);
             [~, U_u] =scat(imu,Wop_color);
             [~, U_v] =scat(imv,Wop_color);
-            U_coeff{1} = U_v; U_coeff{2} = U_u; U_coeff{2} = U_y;
+            U_coeff{1} = U_v; U_coeff{2} = U_u; U_coeff{3} = U_y;
         else
             U_coeff{1} = U_y;
         end
@@ -65,8 +65,10 @@ for i=1:length(jobs)
         cnt = cnt + 1;
         if cnt == 100
 			disp ('storing first 100')
-			save('U_features_100_CIFAR10.mat', 'U_features', '-v7.3')
-			save('images_100_CIFAR10.mat', 'all_images', '-v7.3')
+			save('U_features_100_CIFAR10.mat', 'U_features')
+			save('images_100_CIFAR10.mat', 'all_images')
+            class100=class(1:100)
+            save('labels_100_CIFAR10.mat', 'class100')
 		end
     end
 end
@@ -75,7 +77,7 @@ fprintf(' .');
 timeScat=toc;
 
 disp('storing files')
-save('U_features_CIFAR10.mat', 'U_features', '-v7.3')
-save('all_images_CIFAR10.mat', 'all_images', '-v7.3')
-save('labels_CIFAR10.mat', 'class', '-v7.3')
+save('U_features_CIFAR10.mat', 'U_features')
+save('all_images_CIFAR10.mat', 'all_images')
+save('labels_CIFAR10.mat', 'class')
 

@@ -95,6 +95,6 @@ fprintf(['\nClassified in: ' num2str(timeToClassify) 's\n']);
 mean(res)
 
 % Previous random seed
-if(option.Classification.random_generator_key>0)
-    seed_prev=rng(seed_prev);
-end
+%if(option.Classification.random_generator_key>0)
+%    seed_prev=rng(seed_prev);
+%end
