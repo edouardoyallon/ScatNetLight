@@ -57,7 +57,6 @@ for i=1:length(jobs)
             [~, U_v] =scat(imv,Wop_color);
             U_coeff{1} = U_v; U_coeff{2} = U_u; U_coeff{2} = U_y;
         else
-            [~, U_y]=scat(imy,Wop);
             U_coeff{1} = U_y;
         end
 
