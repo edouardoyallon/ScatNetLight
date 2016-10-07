@@ -50,6 +50,7 @@ for i=1:length(jobs)
         imu=imresize(imu,[option.Layers.size_color,option.Layers.size_color]);
         imv=imresize(imv,[option.Layers.size_color,option.Layers.size_color]);
 
+        image{1} = imy; image{2} = imu; image{3} = imv;
         if(option.Layers.color==1)
             [~, U_y] =scat(imy,Wop);
             [~, U_u] =scat(imu,Wop_color);
@@ -61,12 +62,21 @@ for i=1:length(jobs)
         end
 
         U_features{cnt} = U_coeff;
+        all_images{cnt} = image;
         cnt = cnt + 1;
+        if cnt == 100
+			disp ('storing first 100')
+			save('U_features_100_CIFAR10.mat', 'U_features', '-v7.3')
+			save('images_100_CIFAR10.mat', 'all_images', '-v7.3')
+		end
     end
 end
 fprintf(' .');
 
 timeScat=toc;
 
+disp('storing files')
 save('U_features_CIFAR10.mat', 'U_features', '-v7.3')
+save('all_images_CIFAR10.mat', 'all_images', '-v7.3')
 save('labels_CIFAR10.mat', 'class', '-v7.3')
+
