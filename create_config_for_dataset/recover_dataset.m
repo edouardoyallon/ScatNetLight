@@ -61,7 +61,7 @@ elseif(strcmp(option.Exp.Type,'cifar10_PCA'))
     
     score_function=@(x) score_1VSALL_multiclass(x);
     split_function=@(x) split_fun_cifar();
-    [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar(option);
+    [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar_PCA(option);
     
     
 elseif(strcmp(option.Exp.Type,'caltech101'))
