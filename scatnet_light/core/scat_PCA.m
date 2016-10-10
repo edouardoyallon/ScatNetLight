@@ -23,18 +23,19 @@
 % See also 
 %   WAVELET_FACTORY_1D, WAVELET_FACTORY_2D, WAVELET_FACTORY_2D_PYRAMID
 
-function [S_j] = scat_PCA(x, Wop,PCA_filters, J, S_J_prev)
+function [S, U_tilde] = scat_PCA(x, Wop,PCA_filters, J, S_J_prev)
     if nargin == 5
         % version with previous J given
-        S_j = scat_PCA_previous(x, Wop, PCA_filters, J, S_J_prev);
+        [S, U_tilde] = scat_PCA_previous(x, Wop, PCA_filters, J, S_J_prev);
     else
         % loop on Js
-        S_j = cell(J);
-        S_j{1} = x;
-        S_j_prev = haar_lp(x)
+        S = {};
+        S{1} = x;
+        S_J_prev = S{1};
+        U_tilde = {};
         for j = 2 : J
-            S_j{j} = scat_PCA_previous (x, Wop, PCA_filters, j, S_J_prev);
-            S_J_prev = S_j{j};
+            [S{j}, U_tilde{j}] = scat_PCA_previous (x, Wop, PCA_filters, j, S_J_prev);
+            S_J_prev = S{j};
         end
     
     end
