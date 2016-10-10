@@ -31,6 +31,7 @@ function [S_j] = scat_PCA(x, Wop,PCA_filters, J, S_J_prev)
         % loop on Js
         S_j = cell(J);
         S_j{1} = x;
+        S_j_prev = haar_lp(x)
         for j = 2 : J
             S_j{j} = scat_PCA_previous (x, Wop, PCA_filters, j, S_J_prev);
             S_J_prev = S_j{j};
