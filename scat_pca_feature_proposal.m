@@ -24,6 +24,7 @@ x_test=getImage('test');
 x_train = single(rgb2yuv(x_train));
 x_test = single(rgb2yuv(x_test));
 PCA_filters={};
+S_prev={};
 
 % Train procude on the training set
 for j=1:max_J

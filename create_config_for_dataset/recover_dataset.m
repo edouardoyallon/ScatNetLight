@@ -41,6 +41,28 @@ elseif(strcmp(option.Exp.Type,'cifar10'))
     [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar(option);
     
     
+elseif(strcmp(option.Exp.Type,'cifar10_PCA'))
+    data=[];
+    labels=[];
+    dataset={'data_batch_1.mat','data_batch_2.mat','data_batch_3.mat','data_batch_4.mat','data_batch_5.mat','test_batch'};
+    
+    for i=1:5
+        S=load([option.General.path2database '/' dataset{i}],'data','labels');
+        data_train=[data;S.data];
+        labels=[labels;S.labels];
+    end
+    S=load([option.General.path2database '/' dataset{6}],'data','labels');
+        data_test=S.data;
+        labels=[labels;S.labels];
+    
+    getImageFun=arrayfun(@(x) if(strcmp(x,'train')) data_train else data_test);
+    
+    
+    
+    score_function=@(x) score_1VSALL_multiclass(x);
+    split_function=@(x) split_fun_cifar();
+    [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar(option);
+    
     
 elseif(strcmp(option.Exp.Type,'caltech101'))
     
