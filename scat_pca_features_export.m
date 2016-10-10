@@ -63,12 +63,12 @@ for i=1:length(jobs)
         U_features{cnt} = U_coeff;
         all_images{cnt} = image;
         cnt = cnt + 1;
-        if cnt == 100
-			disp ('storing first 100')
-			save('U_features_100_CIFAR10.mat', 'U_features')
-			save('images_100_CIFAR10.mat', 'all_images')
-            class100=class(1:100)
-            save('labels_100_CIFAR10.mat', 'class100')
+        if cnt == 10
+			disp ('storing first 10')
+			save('U_features_10_CIFAR10.mat', 'U_features')
+			save('images_10_CIFAR10.mat', 'all_images')
+            class10=class(1:10)
+            save('labels_10_CIFAR10.mat', 'class10')
 		end
     end
 end

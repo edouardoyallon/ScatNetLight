@@ -23,25 +23,19 @@
 % See also 
 %   WAVELET_FACTORY_1D, WAVELET_FACTORY_2D, WAVELET_FACTORY_2D_PYRAMID
 
-function [S, U] = scat_PCA(x, Wop,PCA_filters,J)
-    % Initialize future cell
-    % FUTURE: Faster initialization
-    U=cell(1,length(Wop));
-    S=cell(1,length(Wop));
-    
-	% Initialize signal and meta
-	U{1}.signal{1} = x;
-	U{1}.meta.j = zeros(0,1);
-	U{1}.meta.q = zeros(0,1);
-    U{1}.meta.resolution=0;
-
-	% Apply scattering, order per order
-	for j = 0:J-1
-        if (m < numel(Wop)-1)
-			[S{m+1}, V] = Wop{m+1}(U{m+1});
-			U{m+2} = modulus_layer(V);
-		else
-			S{m+1} = Wop{m+1}(U{m+1});
+function [S_j] = scat_PCA(x, Wop,PCA_filters, J, S_J_prev)
+    if nargin == 5
+        % version with previous J given
+        S_j = scat_PCA_previous(x, Wop, PCA_filters, J, S_J_prev);
+    else
+        % loop on Js
+        S_j = cell(J);
+        S_j{1} = x;
+        for j = 2 : J
+            S_j{j} = scat_PCA_previous (x, Wop, PCA_filters, j, S_J_prev);
+            S_J_prev = S_j{j};
         end
-	end
+    
+    end
+
 end
