@@ -23,7 +23,7 @@
 % See also 
 %   WAVELET_FACTORY_1D, WAVELET_FACTORY_2D, WAVELET_FACTORY_2D_PYRAMID
 
-function [S, U_tilde] = scat_PCA(x, Wop,PCA_filters, J, S_J_prev)
+function [S, U_tilde] = scat_PCA2(x, Wop,PCA_filters, J, S_J_prev)
     if nargin == 5
         % version with previous J given
         [S, U_tilde] = scat_PCA_previous(x, Wop, PCA_filters, J, S_J_prev);
