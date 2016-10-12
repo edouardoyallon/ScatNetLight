@@ -20,7 +20,7 @@ if(strcmp(option.Exp.Type,'cifar100'))
     
     score_function=@(x) score_1VSALL_multiclass(x);
     split_function=@(x) split_fun_cifar();
-    [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar(option);
+    [Wop,Wop_color,filter,scat_opt]=create_config_layer_per_layer_cifar(option);
     
 elseif(strcmp(option.Exp.Type,'cifar10'))
     data=[];
@@ -42,26 +42,37 @@ elseif(strcmp(option.Exp.Type,'cifar10'))
     
     
 elseif(strcmp(option.Exp.Type,'cifar10_PCA'))
-    data=[];
-    labels=[];
+    data_train=[];
+    labels_train=[];
     dataset={'data_batch_1.mat','data_batch_2.mat','data_batch_3.mat','data_batch_4.mat','data_batch_5.mat','test_batch'};
     
-    for i=1:5
+    for i=1:option.Exp.n_batches
         S=load([option.General.path2database '/' dataset{i}],'data','labels');
-        data_train=[data;S.data];
-        labels=[labels;S.labels];
+        data_train=[data_train;S.data];
+        labels_train=[labels_train;S.labels];
     end
     S=load([option.General.path2database '/' dataset{6}],'data','labels');
         data_test=S.data;
-        labels=[labels;S.labels];
+        labels_test=S.labels;
     
-    getImageFun=arrayfun(@(x) if(strcmp(x,'train')) data_train else data_test);
+    data_train=reshape(data_train,[size(data_train,1),32,32,3]);
+    data_train=permute(data_train,[2,3,4,1]);
+    data_test=reshape(data_test,[size(data_test,1),32,32,3]);
+    data_test=permute(data_test,[2,3,4,1]);
+    getImageFun=@(x) get_data_f(x,data_train,data_test);
     
     
     
     score_function=@(x) score_1VSALL_multiclass(x);
-    split_function=@(x) split_fun_cifar();
-    [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar_PCA(option);
+    split_function=@(x) {labels_train,labels_test};
+    
+    %FIXME
+    Wop=0;
+    Wop_color=0;
+    filt_opt=0;
+    scat_opt=0;
+    labels=0;
+   % [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar(option);
     
     
 elseif(strcmp(option.Exp.Type,'caltech101'))
@@ -126,3 +137,4 @@ elseif(strcmp(option.Exp.Type,'caltech256'))
     [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_caltech(option);    
 end
 end
+

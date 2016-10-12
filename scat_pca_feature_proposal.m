@@ -29,17 +29,16 @@ S_prev={};
 % Train procude on the training set
 for j=1:max_J
     if(j<max_J)
-        [S,S_tilde,U]=scat_PCA(x,Wop,PCA_filters,j,S_prev);
-        S_prev=S;
+        [S,U_tilde]=scat_PCA(x,Wop,PCA_filters,j,U_tilde_prev);
+        U_tilde_prev=U_tilde;
+        
+        [U_tilde,mu,D]=standardize(U_tilde);
     
-        Z = concat_in_matrix(S_tilde,U);
-        [Z,mu,D]=standardize(Z);
-    
-        PCA_filters{j+1}=pca(Z);
+        PCA_filters{j+1}=pca(U_tilde);
         PCA_filters{j+1} = apply_renorm(D,PCA_filters{j+1});
     
     else
-        S=scat_PCA(x,Wop,PCA_filters,j,S_prev);
+        S=scat_PCA(x,Wop,PCA_filters,j);
     end
     
     % Maybe one should save PCA_filters?

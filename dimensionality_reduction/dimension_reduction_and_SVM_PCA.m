@@ -5,11 +5,11 @@ SIGMA_v=option.Classification.SIGMA_v;
    
     tic;
     % Split in training and testing sets
-    [index_labels_train,index_labels_test]=split_function();
+    q=split_function();
+    labels_train=q{1}(1:30);
+    labels_test=q{2};
     
-    labels_train=class(index_labels_train);
-    labels_test=class(index_labels_test);
- 
+    
         outputTrainData=S_train;
         outputTestData=S_test;
   
