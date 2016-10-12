@@ -1,9 +1,9 @@
 function option=create_config_cifar_10(serverName,date_exp)
-if(strcmp(serverName,'my_server_name'))
-    option.General.path2database='PATHS/cifar-10-batches-mat';
-    option.General.path2outputs='PATHS/Output/';
+if(strcmp(serverName,'carmine'))
+    option.General.path2database='./cifar-10-batches-mat';
+    option.General.path2outputs='./Output/';
     option.Classification.Threads_dim_red=0;
-    option.Classification.Threads_classif=10;
+    option.Classification.Threads_classif=2;
 else
     error('Server not recognized');
 end
@@ -25,12 +25,12 @@ option.Layers.color=1;
 option.Layers.size=64;
 option.Layers.size_color=64;
 option.Layers.J=4;
-option.Layers.Type_scattering='tr'
+option.Layers.Type_scattering='t'
 
 option.Classification.n_run=1;
 option.Classification.random_generator_key=10;
 option.Classification.C=50;
-option.Classification.D=200;
+option.Classification.D=0;
 option.Classification.nAverageKernel=2;
 option.Classification.SIGMA_v=1;
 end
