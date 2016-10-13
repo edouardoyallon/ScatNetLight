@@ -7,8 +7,8 @@ tic;
 % Split in training and testing sets
 q=split_function();
 %FIXME
-labels_train=q{1}(1:30);
-labels_test=q{2}(1:30);
+labels_train=q{1};
+labels_test=q{2};
 
 
 outputTrainData=S_train;

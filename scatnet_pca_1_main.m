@@ -25,7 +25,7 @@ filt_opt.layer{1}.translation.n_wavelet_per_octave=1;
 filt_opt.layer{2}.translation.J=option.Exp.max_J;
 filt_opt.layer{2}.translation.L=8;
 scat_opt.layer{2}.translation.oversampling=0;
-scat_opt.layer{2}.mutranslation.type='t';
+scat_opt.layer{2}.translation.type='t';
 
 % Third layer(copy of the previous one)
 filt_opt.layer{3}=filt_opt.layer{2};
@@ -83,7 +83,7 @@ for j=1:max_J
     [~,d,F] = svd(U_j_vect'*U_j_vect);
     svdj=toc;
     fprintf ('%g s\n', num2str(svdj))
-    PCA_filters{j} = F; %'*D;
+    PCA_filters{j} = F'; %*D;
     PCA_evals{j}=diag(d);
 end
 tic
@@ -101,7 +101,7 @@ S_train=S_train';
 S_test=S_test';
 timeScat=toc;
 fprintf(['done\nscattering processed in ' num2str(timeScat) 's\n']);
-
+%%
 fprintf('classifying...\n')
 dimension_reduction_and_SVM_PCA
 
