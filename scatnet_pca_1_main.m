@@ -1,5 +1,5 @@
 %% TEMPORARY MAIN FOR PCA type 1
-
+load_path_software
 option=struct;
 option.Exp=struct;
 option.Exp.Type='cifar10_PCA';
@@ -25,7 +25,7 @@ filt_opt.layer{1}.translation.n_wavelet_per_octave=1;
 filt_opt.layer{2}.translation.J=option.Exp.max_J;
 filt_opt.layer{2}.translation.L=8;
 scat_opt.layer{2}.translation.oversampling=0;
-scat_opt.layer{2}.translation.type='t';
+scat_opt.layer{2}.mutranslation.type='t';
 
 % Third layer(copy of the previous one)
 filt_opt.layer{3}=filt_opt.layer{2};
@@ -55,8 +55,8 @@ max_J=option.Exp.max_J;
 
 %%
 if 0
-   x_train=x_train(:,:,:,1:20); 
-   x_test=x_test(:,:,:,1:20); 
+   x_train=x_train(:,:,:,1:30); 
+   x_test=x_test(:,:,:,1:30); 
 end
 
 fprintf ('size of experiment: train = %s, test = %s\n\n', num2str(size(x_train)), num2str(size(x_test)))
@@ -79,10 +79,11 @@ for j=1:max_J
     fprintf ('%g s\n', num2str(vecj))
     fprintf ('SVD at scale %d...', j)
     tic;
+    %[U_j_vect, ~,D]=standardize_feature(U_j_vect');
     [~,d,F] = svd(U_j_vect'*U_j_vect);
     svdj=toc;
     fprintf ('%g s\n', num2str(svdj))
-    PCA_filters{j} = F';
+    PCA_filters{j} = F; %'*D;
     PCA_evals{j}=diag(d);
 end
 tic
