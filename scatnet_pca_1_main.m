@@ -4,7 +4,7 @@ option=struct;
 option.Exp=struct;
 option.Exp.Type='cifar10_PCA';
 option.Exp.n_batches=1;
-option.Exp.max_J=4;
+option.Exp.max_J=3;
 option.General.path2database='./cifar-10-batches-mat';
 option.General.path2outputs='./Output/';
 option.Classification.C=1;
@@ -54,10 +54,14 @@ x_test = single(rgb2yuv(x_test));
 max_J=option.Exp.max_J;
 
 %%
+if 0
+   x_train=x_train(:,:,:,1:20); 
+   x_test=x_test(:,:,:,1:20); 
+end
 
 fprintf ('size of experiment: train = %s, test = %s\n\n', num2str(size(x_train)), num2str(size(x_test)))
 PCA_filters=cell(1,max_J);
-
+PCA_evals=cell(1,max_J);
 fprintf('training...\n')
 tic
 
@@ -70,16 +74,19 @@ for j=1:max_J
     fprintf ('vector building at scale %d...', j)
     tic;
     U_j_vect=tensor_2_vector_PCA(U_j);
+    size(U_j_vect)
     vecj=toc;
     fprintf ('%g s\n', num2str(vecj))
     fprintf ('SVD at scale %d...', j)
     tic;
-    [~,~,F] = svd(U_j_vect'*U_j_vect);
+    [~,d,F] = svd(U_j_vect'*U_j_vect);
     svdj=toc;
     fprintf ('%g s\n', num2str(svdj))
     PCA_filters{j} = F';
+    PCA_evals{j}=diag(d);
 end
 tic
+fprintf ('scat_pca...');
 S_train = scat_PCA1(x_train,filters,PCA_filters,max_J);
 traintime=toc;
 fprintf('done in %g s\ntesting...', num2str(traintime))
