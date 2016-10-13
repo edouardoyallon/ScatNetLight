@@ -79,11 +79,11 @@ for j=1:max_J
     fprintf ('%g s\n', num2str(vecj))
     fprintf ('SVD at scale %d...', j)
     tic;
-    %[U_j_vect, ~,D]=standardize_feature(U_j_vect');
+    [U_j_vect, ~,D]=standardize_feature(U_j_vect');
     [~,d,F] = svd(U_j_vect'*U_j_vect);
     svdj=toc;
     fprintf ('%g s\n', num2str(svdj))
-    PCA_filters{j} = F'; %*D;
+    PCA_filters{j} = F' * D;
     PCA_evals{j}=diag(d);
 end
 tic
@@ -104,5 +104,10 @@ fprintf(['done\nscattering processed in ' num2str(timeScat) 's\n']);
 %%
 fprintf('classifying...\n')
 dimension_reduction_and_SVM_PCA
+
+save('PCA_filters', 'PCA_filters') 
+save('PCA_evals', 'PCA_evals') 
+save('result', 'ans')
+save('confmat','confusion_matrix')
 
 %EOF
