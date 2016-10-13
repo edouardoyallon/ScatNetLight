@@ -64,17 +64,21 @@ function [x_phi, x_psi, meta_phi, meta_psi] = wavelet_2d(x, filters, options)
     meta_phi.theta = -1;
     meta_phi.resolution = options.x_resolution + ds;
     
-    % Band-pass filtering, downsampling and unpadding
-    x_psi=cell(1,numel(find(psi_mask)));
-    meta_psi = struct();
-    for p = find(psi_mask)
-        j = filters.psi.meta.j(p);
-        ds = max(floor(j)- options.x_resolution - oversampling, 0);
-        x_psi{p} = conv_sub_2d(xf, filters.psi.filter{p}, ds);
-        x_psi{p} = unpad_signal(x_psi{p}, ds*[1 1], size(x), center_sig);
-        meta_psi.j(1,p) = filters.psi.meta.j(p);
-        meta_psi.theta(1,p) = filters.psi.meta.theta(p);
-        meta_psi.resolution(1,p) = options.x_resolution+ds;
+    x_psi=cell(0);
+    meta_psi=struct;
+    if(nargout>1)
+        % Band-pass filtering, downsampling and unpadding
+        x_psi=cell(1,numel(find(psi_mask)));
+        meta_psi = struct();
+        for p = find(psi_mask)
+            j = filters.psi.meta.j(p);
+            ds = max(floor(j)- options.x_resolution - oversampling, 0);
+            x_psi{p} = conv_sub_2d(xf, filters.psi.filter{p}, ds);
+            x_psi{p} = unpad_signal(x_psi{p}, ds*[1 1], size(x), center_sig);
+            meta_psi.j(1,p) = filters.psi.meta.j(p);
+            meta_psi.theta(1,p) = filters.psi.meta.theta(p);
+            meta_psi.resolution(1,p) = options.x_resolution+ds;
+        end
     end
     
 end
