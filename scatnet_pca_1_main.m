@@ -1,4 +1,7 @@
 %% TEMPORARY MAIN FOR PCA type 1
+
+fprintf('loading options...\n');
+
 load_path_software
 option=struct;
 option.Exp=struct;
@@ -7,12 +10,12 @@ option.Exp.n_batches=1;
 option.Exp.max_J=3;
 option.General.path2database='./cifar-10-batches-mat';
 option.General.path2outputs='./Output/';
-option.Classification.C=1;
-option.Classification.SIGMA_v=1;
 
 size_signal=32;
 
 scat_opt.M=2;
+
+debug_set = 1;
 
 % First layer
 filt_opt.layer{1}.translation.J=option.Exp.max_J;
@@ -38,8 +41,6 @@ scat_opt.layer{3}=scat_opt.layer{2};
 %x=rand(32,32);
 filters=filters{1}.translation;
 
-% Clear every previous batch of the works
-fprintf('Load options...\n');
 
 % Create the config specific to the dataset023
 [class,getImage,score_function,split_function,Wop,Wop_color,ds,filt_opt_color]=recover_dataset(option);
@@ -54,60 +55,57 @@ x_test = single(rgb2yuv(x_test));
 max_J=option.Exp.max_J;
 
 %%
-if 0
+if debug_set
    x_train=x_train(:,:,:,1:30); 
    x_test=x_test(:,:,:,1:30); 
 end
 
+fprintf ('\nLEARNING -------------------------------------------\n\n')
 fprintf ('size of experiment: train = %s, test = %s\n\n', num2str(size(x_train)), num2str(size(x_test)))
+
 PCA_filters=cell(1,max_J);
 PCA_evals=cell(1,max_J);
-fprintf('training...\n')
+
 tic
 
 for j=1:max_J
-    fprintf ('compute scale %d...', j)
-    tic;
+    fprintf ('compute scale %d...\n', j)
     U_j = compute_J_scale(x_train, filters, j);
-    compj=toc;
-    fprintf ('%g s\n', num2str(compj))
-    fprintf ('vector building at scale %d...', j)
-    tic;
     U_j_vect=tensor_2_vector_PCA(U_j);
-    size(U_j_vect)
-    vecj=toc;
-    fprintf ('%g s\n', num2str(vecj))
-    fprintf ('SVD at scale %d...', j)
-    tic;
-    [U_j_vect, ~,D]=standardize_feature(U_j_vect');
+    fprintf ('standardization at scale %d...\n', j)
+    U_j_vect=standardize_feature(U_j_vect');
     U_j_vect=U_j_vect';
+    fprintf ('SVD at scale %d...\n\n', j)
     [~,d,F] = svd(U_j_vect'*U_j_vect);
-    svdj=toc;
-    fprintf ('%g s\n', num2str(svdj))
-    PCA_filters{j} = F'; % * D;
+    PCA_filters{j} = F';
     PCA_evals{j}=diag(d);
 end
 
 clear U_j
 clear U_j_vect
 
-tic
-fprintf ('scat_pca...');
-S_train = scat_PCA1(x_train,filters,PCA_filters,max_J);
-traintime=toc;
-fprintf('done in %g s\ntesting...', num2str(traintime))
-tic
-S_test = scat_PCA1(x_test,filters,PCA_filters,max_J);
-testtime=toc;
-fprintf('done in %g s\nstandardizing...', num2str(testtime))
-[S_train,mu,D]=standardize_feature(S_train');
-S_test=standardize_feature(S_test',mu,D);
+%%
+option.Exp.PCA_eps_ratio=0;
+eps_ratio = option.Exp.PCA_eps_ratio;
+
+fprintf ('CLASSIFICATION -------------------------------------------\n\n')
+fprintf ('training... \n')
+S_train = scat_PCA1(x_train, filters, PCA_filters, PCA_evals, eps_ratio, max_J);
+fprintf('testing...\n');
+S_test = scat_PCA1(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J);
+fprintf('standardizing...')
+[S_train, mu, D]=standardize_feature(S_train');
+S_test=standardize_feature(S_test', mu, D);
 S_train=S_train';
 S_test=S_test';
 timeScat=toc;
-fprintf(['done\nscattering processed in ' num2str(timeScat) 's\n']);
+fprintf(['\nscattering processed in ' num2str(timeScat) 's\n']);
 %%
 fprintf('classifying...\n')
+
+option.Classification.C=1;
+option.Classification.SIGMA_v=1;
+
 dimension_reduction_and_SVM_PCA
 
 save('PCA_filters', 'PCA_filters') 

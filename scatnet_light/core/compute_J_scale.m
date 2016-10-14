@@ -1,4 +1,4 @@
-function U = compute_j_scale(x, filters, J)
+function U = compute_J_scale(x, filters, J)
     filters_j = select_filters_at_J (filters, J);
     
     filters_j{1}.meta.Q=1;
