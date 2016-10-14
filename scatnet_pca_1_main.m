@@ -15,7 +15,7 @@ size_signal=32;
 
 scat_opt.M=2;
 
-debug_set = 1;
+debug_set = 0;
 
 % First layer
 filt_opt.layer{1}.translation.J=option.Exp.max_J;
@@ -72,17 +72,16 @@ for j=1:max_J
     fprintf ('compute scale %d...\n', j)
     U_j = compute_J_scale(x_train, filters, j);
     U_j_vect=tensor_2_vector_PCA(U_j);
+    clear U_j
     fprintf ('standardization at scale %d...\n', j)
     U_j_vect=standardize_feature(U_j_vect');
     U_j_vect=U_j_vect';
     fprintf ('SVD at scale %d...\n\n', j)
     [~,d,F] = svd(U_j_vect'*U_j_vect);
+    clear U_j_vect
     PCA_filters{j} = F';
     PCA_evals{j}=diag(d);
 end
-
-clear U_j
-clear U_j_vect
 
 %%
 option.Exp.PCA_eps_ratio=0;
@@ -103,7 +102,7 @@ fprintf(['\nscattering processed in ' num2str(timeScat) 's\n']);
 %%
 fprintf('classifying...\n')
 
-option.Classification.C=1;
+option.Classification.C=10;
 option.Classification.SIGMA_v=1;
 
 dimension_reduction_and_SVM_PCA
