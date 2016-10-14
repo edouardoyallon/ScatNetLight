@@ -80,12 +80,17 @@ for j=1:max_J
     fprintf ('SVD at scale %d...', j)
     tic;
     [U_j_vect, ~,D]=standardize_feature(U_j_vect');
+    U_j_vect=U_j_vect';
     [~,d,F] = svd(U_j_vect'*U_j_vect);
     svdj=toc;
     fprintf ('%g s\n', num2str(svdj))
-    PCA_filters{j} = F' * D;
+    PCA_filters{j} = F'; % * D;
     PCA_evals{j}=diag(d);
 end
+
+clear U_j
+clear U_j_vect
+
 tic
 fprintf ('scat_pca...');
 S_train = scat_PCA1(x_train,filters,PCA_filters,max_J);
