@@ -54,7 +54,7 @@ x_test = single(rgb2yuv(x_test));
 
 max_J=option.Exp.max_J;
 
-%%
+
 if debug_set
    x_train=x_train(:,:,:,1:30); 
    x_test=x_test(:,:,:,1:30); 
@@ -88,10 +88,20 @@ option.Exp.PCA_eps_ratio=0;
 eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
-fprintf ('training... \n')
-S_train = scat_PCA1(x_train, filters, PCA_filters, PCA_evals, eps_ratio, max_J);
 fprintf('testing...\n');
 S_test = scat_PCA1(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J);
+fprintf ('training... \n')
+sz = size(S_test, 2);
+loops = ceil(size(x_train, 4) / sz);
+S_train=zeros(size(S_test,1),size(x_train,4));
+
+idx=1;
+for i = 1 : loops
+    IDX=idx:min([idx+sz-1,size(x_train,4)]);
+    S_train(:,IDX) = scat_PCA1(x_train(:,:,:,IDX), filters, PCA_filters, PCA_evals, eps_ratio, max_J);
+    idx=idx+sz;
+end
+
 fprintf('standardizing...')
 [S_train, mu, D]=standardize_feature(S_train');
 S_test=standardize_feature(S_test', mu, D);

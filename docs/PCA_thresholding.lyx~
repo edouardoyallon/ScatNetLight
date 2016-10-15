@@ -84,7 +84,7 @@ CIFAR-10, only first batch: 10000 files for training, 10000 files for testing.
 \series bold
 63%
 \series default
- accuracy with plain scattering (translation only), 
+ accuracy with plain scattering (translation only), SVM: 
 \begin_inset Formula $\sigma=C=1$
 \end_inset
 
@@ -92,15 +92,15 @@ CIFAR-10, only first batch: 10000 files for training, 10000 files for testing.
 \end_layout
 
 \begin_layout Section
-Method
+Method PCA1
 \end_layout
 
 \begin_layout Standard
-PCA1: 
+Pipeline: 
 \begin_inset Formula $x\rightarrow scat^{2}\rightarrow PCA_{j}\rightarrow|\cdot|\rightarrow\phi_{J}\rightarrow standard\rightarrow SVM$
 \end_inset
 
-, J=3, L=8, translation only.
+, with J=3, L=8, translation only.
 \end_layout
 
 \begin_layout Section
@@ -1873,7 +1873,7 @@ number of features
 \begin_inset Text
 
 \begin_layout Plain Layout
-10S
+10
 \end_layout
 
 \end_inset
