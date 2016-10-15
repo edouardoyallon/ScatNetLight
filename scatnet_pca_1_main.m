@@ -15,7 +15,7 @@ size_signal=32;
 
 scat_opt.M=2;
 
-debug_set = 0;
+debug_set = 1;
 
 % First layer
 filt_opt.layer{1}.translation.J=option.Exp.max_J;
@@ -101,6 +101,10 @@ for i = 1 : loops
     S_train(:,IDX) = scat_PCA1(x_train(:,:,:,IDX), filters, PCA_filters, PCA_evals, eps_ratio, max_J);
     idx=idx+sz;
 end
+
+%% log here
+
+%%
 
 fprintf('standardizing...')
 [S_train, mu, D]=standardize_feature(S_train');
