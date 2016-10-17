@@ -96,12 +96,12 @@ loops = ceil(size(x_train, 4) / sz);
 S_train=zeros(size(S_test,1),size(x_train,4));
 idx=1;
 for i = 1 : loops
+    IDX=idx:min([idx+sz-1,size(x_train,4)]);
     U_j_batch = cell(1, max_J);
     for j = 1 : max_J
         U_j_batch{j}=U_j{j}(:,:,:,IDX);
     end
 
-    IDX=idx:min([idx+sz-1,size(x_train,4)]);
     S_train(:,IDX) = scat_PCA1(U_j_batch, filters, PCA_filters, PCA_evals, eps_ratio, max_J, false);
     idx=idx+sz;
 end
