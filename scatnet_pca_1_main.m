@@ -8,6 +8,7 @@ option.Exp=struct;
 option.Exp.Type='cifar10_PCA';
 option.Exp.n_batches=1;
 option.Exp.max_J=3;
+option.Exp.log_features=false;
 option.General.path2database='./cifar-10-batches-mat';
 option.General.path2outputs='./Output/';
 
@@ -15,7 +16,7 @@ size_signal=32;
 
 scat_opt.M=2;
 
-debug_set = 0;
+debug_set = 1;
 
 % First layer
 filt_opt.layer{1}.translation.J=option.Exp.max_J;
@@ -65,19 +66,20 @@ PCA_filters=cell(1,max_J);
 PCA_evals=cell(1,max_J);
 
 tic
+U_j = cell(1, max_J);
 
 for j=1:max_J
     fprintf ('compute scale %d...\n', j)
-    U_j = compute_J_scale(x_train, filters, j);
-    U_j_vect=tensor_2_vector_PCA(U_j);
-    clear U_j
+    U_j{j} = compute_J_scale(x_train, filters, j);
+    U_j_vect=tensor_2_vector_PCA(U_j{j});
+    %clear U_j
     fprintf ('standardization at scale %d...\n', j)
     U_j_vect=standardize_feature(U_j_vect');
     U_j_vect=U_j_vect';
     fprintf ('SVD at scale %d...\n\n', j)
     [sv,d,F] = svd(U_j_vect, 'econ');
     clear U_j_vect
-    PCA_filters{j} = F;
+    PCA_filters{j} = F';
     PCA_evals{j}=diag(d);
 end
 
@@ -87,20 +89,29 @@ eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
 fprintf('testing...\n');
-S_test = scat_PCA1(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J);
+S_test = scat_PCA1(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J, true);
 fprintf ('training... \n')
 sz = size(S_test, 2);
 loops = ceil(size(x_train, 4) / sz);
 S_train=zeros(size(S_test,1),size(x_train,4));
-
 idx=1;
 for i = 1 : loops
+    U_j_batch = cell(1, max_J);
+    for j = 1 : max_J
+        U_j_batch{j}=U_j{j}(:,:,:,IDX);
+    end
+
     IDX=idx:min([idx+sz-1,size(x_train,4)]);
-    S_train(:,IDX) = scat_PCA1(x_train(:,:,:,IDX), filters, PCA_filters, PCA_evals, eps_ratio, max_J);
+    S_train(:,IDX) = scat_PCA1(U_j_batch, filters, PCA_filters, PCA_evals, eps_ratio, max_J, false);
     idx=idx+sz;
 end
 
 %% log here
+
+if option.Exp.log_features
+    S_train=log(0.0001 + S_train);
+    S_test=log(0.0001 + S_test);
+end
 
 %%
 
