@@ -74,17 +74,18 @@ for j=1:max_J
     U_j_vect=tensor_2_vector_PCA(U_j{j});
     %clear U_j
     fprintf ('standardization at scale %d...\n', j)
-    U_j_vect=standardize_feature(U_j_vect');
-    U_j_vect=U_j_vect';
-    fprintf ('SVD at scale %d...\n\n', j)
-    [sv,d,F] = svd(U_j_vect, 'econ');
+    %U_j_vect=standardize_feature(U_j_vect');
+    %U_j_vect=U_j_vect';
+    fprintf ('PCA at scale %d...\n\n', j)
+    %[sv,d,F] = svd(U_j_vect, 'econ');
+    [F,~, d] = pca(U_j_vect'* U_j_vect);
     clear U_j_vect
-    PCA_filters{j} = F';
-    PCA_evals{j}=diag(d);
+    PCA_filters{j} = F;
+    PCA_evals{j}=d;
 end
 
 %%
-option.Exp.PCA_eps_ratio=0;
+option.Exp.PCA_eps_ratio=0.1;
 eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
