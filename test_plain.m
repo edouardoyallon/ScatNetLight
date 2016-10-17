@@ -66,6 +66,10 @@ S_train = scat_to_tensor(S_train);
 sz = size(S_train);
 S_train=reshape(S_train, [sz(1) * sz(2), sz(3)]);
 
+S_test = scat_to_tensor(S_test);
+sz = size(S_test);
+S_test=reshape(S_test, [sz(1) * sz(2), sz(3)]);
+
 %%
 
 fprintf('standardizing...')
