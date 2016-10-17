@@ -59,6 +59,7 @@ if debug_set
    x_test=x_test(:,:,:,1:30); 
 end
 
+tic
 S_train = scat(x_train, Wop);
 S_test = scat(x_test, Wop);
 
