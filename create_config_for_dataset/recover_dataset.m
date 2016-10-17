@@ -72,7 +72,7 @@ elseif(strcmp(option.Exp.Type,'cifar10_PCA'))
     filt_opt=0;
     scat_opt=0;
     labels=0;
-   % [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar(option);
+    [Wop,Wop_color,filt_opt,scat_opt]=create_config_layer_per_layer_cifar_PCA(option);
     
     
 elseif(strcmp(option.Exp.Type,'caltech101'))
