@@ -15,7 +15,7 @@ size_signal=32;
 
 scat_opt.M=2;
 
-debug_set = 1;
+debug_set = 0;
 
 % First layer
 filt_opt.layer{1}.translation.J=option.Exp.max_J;
@@ -34,13 +34,11 @@ scat_opt.layer{2}.translation.type='t';
 filt_opt.layer{3}=filt_opt.layer{2};
 scat_opt.layer{3}=scat_opt.layer{2};
 
-
 %%
 [~,filters]=wavelet_factory_2d([size_signal,size_signal],filt_opt,scat_opt);
 
 %x=rand(32,32);
-filters=filters{1}.translation;
-
+filters=filters{1}.translation; 
 
 % Create the config specific to the dataset023
 [class,getImage,score_function,split_function,Wop,Wop_color,ds,filt_opt_color]=recover_dataset(option);
@@ -77,9 +75,9 @@ for j=1:max_J
     U_j_vect=standardize_feature(U_j_vect');
     U_j_vect=U_j_vect';
     fprintf ('SVD at scale %d...\n\n', j)
-    [~,d,F] = svd(U_j_vect'*U_j_vect);
+    [sv,d,F] = svd(U_j_vect, 'econ');
     clear U_j_vect
-    PCA_filters{j} = F';
+    PCA_filters{j} = F;
     PCA_evals{j}=diag(d);
 end
 

@@ -4,7 +4,7 @@ function S = scat_PCA1(x, filters, PCA_filters, PCA_evals, eps_ratio, J)
     for j = 1 : J
         fprintf ('\tscat_pca1 -> compute scale %d\n', j)
         U_j = compute_J_scale(x, filters, j);
-        variance = sum (PCA_evals{j});
+        variance = sum (PCA_evals{j}.^2);
         threshold = variance * eps_ratio;
         PCA_cut = PCA_filters{j}(:, PCA_evals{j} > threshold);
         fprintf ('\tscat_pca1 -> project pca at scale %d (dims = %s)\n', j, num2str(size (PCA_cut)))
