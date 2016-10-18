@@ -16,13 +16,13 @@ function U = compute_J_scale(x, filters, J)
     s3p=numel(U_j_1.signal{end})/(s1*s2*s4);
     
     if(J>1)
-    [~, U_j_2] = wavelet_layer_2_2d (U_j_1, filters_j{2}) ;
-    s3= numel(U_j_2.signal{1})/(s1*s2*s4);
-    
-    %size(U_j_2.signal{1})
-    %size(U_j_1.signal{end})
-    
-    U = cat(3, reshape(U_j_2.signal{1}, [s1, s2, s3,s4]), reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]));
+        [~, U_j_2] = wavelet_layer_2_2d (U_j_1, filters_j{2}) ;
+        s3= numel(U_j_2.signal{1})/(s1*s2*s4);
+
+        %size(U_j_2.signal{1})
+        %size(U_j_1.signal{end})
+
+        U = cat(3, reshape(U_j_2.signal{1}, [s1, s2, s3,s4]), reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]));
     else
        U=reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]);
     end

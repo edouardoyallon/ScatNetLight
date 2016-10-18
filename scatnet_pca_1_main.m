@@ -12,11 +12,11 @@ option.Exp.log_features=false;
 option.General.path2database='./cifar-10-batches-mat';
 option.General.path2outputs='./Output/';
 
-size_signal=32;
+size_signal = 32;
 
-scat_opt.M=2;
+scat_opt.M = 2;
 
-debug_set = 1;
+debug_set = 0;
 
 % First layer
 filt_opt.layer{1}.translation.J=option.Exp.max_J;
@@ -55,8 +55,8 @@ max_J=option.Exp.max_J;
 
 
 if debug_set
-   x_train=x_train(:,:,:,1:150); 
-   x_test=x_test(:,:,:,1:150); 
+   x_train=x_train(:,:,:,1:50); 
+   x_test=x_test(:,:,:,1:50); 
 end
 
 %% learning PCA filters
@@ -74,8 +74,7 @@ for j=1:max_J
     U_j{j} = compute_J_scale(x_train, filters, j);
     [U_j_vect, sz] = tensor_2_vector_PCA(U_j{j});
     fprintf ('standardization at scale %d...\n', j)
-    U_j_vect = standardize_feature(U_j_vect');
-    U_j_vect = U_j_vect';
+    [U_j_vect, mu, et] = standardize_feature(U_j_vect);
     fprintf ('PCA at scale %d...\n\n', j)
     [sv, d, F] = svd(U_j_vect'*U_j_vect, 'econ');
     %[F,~, d] = pca(U_j_vect, 'Economy', true);
@@ -85,7 +84,7 @@ for j=1:max_J
 end
 
 %% computing testing and training data
-option.Exp.PCA_eps_ratio=0.001;
+option.Exp.PCA_eps_ratio=0.01;
 eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
