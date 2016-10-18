@@ -35,7 +35,7 @@ scat_opt.layer{2}.translation.type='t';
 filt_opt.layer{3}=filt_opt.layer{2};
 scat_opt.layer{3}=scat_opt.layer{2};
 
-%%
+%% wavelet filters and input data
 [~,filters]=wavelet_factory_2d([size_signal,size_signal],filt_opt,scat_opt);
 
 %x=rand(32,32);
@@ -59,6 +59,7 @@ if debug_set
    x_test=x_test(:,:,:,1:150); 
 end
 
+%% learning PCA filters
 fprintf ('\nLEARNING -------------------------------------------\n\n')
 fprintf ('size of experiment: train = %s, test = %s\n\n', num2str(size(x_train)), num2str(size(x_test)))
 
@@ -83,7 +84,7 @@ for j=1:max_J
     PCA_evals{j} = diag (d);
 end
 
-%%
+%% computing testing and training data
 option.Exp.PCA_eps_ratio=0.001;
 eps_ratio = option.Exp.PCA_eps_ratio;
 
@@ -106,14 +107,14 @@ for i = 1 : loops
     idx=idx+sz;
 end
 
-%% log here
+%% log features
 
 if option.Exp.log_features
     S_train=log(0.0001 + S_train);
     S_test=log(0.0001 + S_test);
 end
 
-%%
+%% standardization
 
 fprintf('standardizing...')
 [S_train, mu, D]=standardize_feature(S_train');
@@ -122,7 +123,8 @@ S_train=S_train';
 S_test=S_test';
 timeScat=toc;
 fprintf(['\nscattering processed in ' num2str(timeScat) 's\n']);
-%%
+%% svm classification
+
 fprintf('classifying...\n')
 
 option.Classification.C=10;

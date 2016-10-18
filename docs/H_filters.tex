@@ -1,0 +1,43 @@
+\documentclass[a4page]{article}
+
+\title{H filters for PCA 2}
+
+\begin{document}
+	\maketitle
+	\section{Computation}
+	
+	We need $K$ convolutions with filters $h_k$ without subsampling by a factor 2, then
+	$J-K$ convolutions with filters $h_k, K+\leq k \leq J$ with subsampling by factor 2.
+	
+	This is equivalent to a convolution with a single filter $\phi_J$ and a subsampling by a
+	factor $2^{J-K}$ whose Fourier transform is:
+	
+	\begin{equation}
+		\hat{h}(\omega) \approx \hat{h}_1(\omega) \hat{h}_2(\omega) \ldots \hat{h}_K(\omega) \hat{h}_{K+1}(2 \omega) \hat{h}_{K+2}(2^2 \omega) \ldots \hat{h}_J (2^{J-K} \omega).
+	\end{equation}
+
+To compute the filters, we need to have: 
+
+\begin{equation}
+	\hat{h}_1 \approx \frac{\hat{\phi}_0(\omega)}{\hat{\phi}_1(\omega)}
+\end{equation}
+and for all $k \leq K$:
+\begin{equation}
+\hat{h}_k \approx \frac{\hat{\phi}_{k-1}(\omega)}{\hat{\phi}_k(\omega)}.
+\end{equation}
+
+Since $\hat{\phi}_k(\omega) \approx \hat{\phi}(2^k \omega)$, we have that:
+
+\begin{equation}
+	\hat{h}_k \approx \frac{\hat{\phi}_(2^{k-1}\omega)}{\hat{\phi}_(2^k \omega)}
+\end{equation}
+then in subsampling range for $k > K$:
+\begin{equation}
+\hat{h}_k (2^{k-K} \omega) \approx \frac{\hat{\phi}_{k-1}(\omega)}{\hat{\phi}_{k} (\omega)}
+\end{equation}
+so finally:
+\begin{equation}
+\hat{h}_k (\omega) \approx \frac{\hat{\phi}_k(2^{-K+1}\omega)}{\hat{\phi}_(2^{-K} \omega)} = \hat{h}(\omega).
+\end{equation}
+So, the $h$ filters do not depend on $k$.
+\end{document}

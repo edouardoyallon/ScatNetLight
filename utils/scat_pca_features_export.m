@@ -1,83 +1,91 @@
+%% Export features on CIFAR10
+
+fprintf('loading options...\n');
+
 load_path_software
-option=create_config_cifar_10('carmine')
+option=struct;
+option.Exp=struct;
+option.Exp.Type='cifar10_PCA';
+option.Exp.n_batches=1;
+option.Exp.max_J=3;
+option.Exp.log_features=false;
+option.General.path2database='./cifar-10-batches-mat';
+option.General.path2outputs='./Output/';
 
+size_signal=32;
 
+scat_opt.M=2;
 
-% Clear every previous batch of the works
-clear jobs
-fprintf('Load options...\n');
+debug_set = 0;
 
-% Create the config specific to the dataset
-[class,getImage,score_function,split_function,Wop,Wop_color,filt_opt,filt_opt_color]=recover_dataset(option);
+% First layer
+filt_opt.layer{1}.translation.J=option.Exp.max_J;
+filt_opt.layer{1}.translation.L=8;
+scat_opt.layer{1}.translation.oversampling=0;
+filt_opt.layer{1}.translation.n_wavelet_per_octave=1;
 
-% Batch the dataset
-nImages=numel(class);
-k=1;
+% Second layer
+% Translation
+filt_opt.layer{2}.translation.J=option.Exp.max_J;
+filt_opt.layer{2}.translation.L=8;
+scat_opt.layer{2}.translation.oversampling=0;
+scat_opt.layer{2}.translation.type='t';
 
-for ii=1:option.General.numJobPerWorker:nImages
-    % jobs{k} contain the index of the images to process at the k-th process
-    jobs{k}=ii:min(nImages,ii+option.General.numJobPerWorker-1);
-    k=k+1;
+% Third layer(copy of the previous one)
+filt_opt.layer{3}=filt_opt.layer{2};
+scat_opt.layer{3}=scat_opt.layer{2};
+
+%% wavelet filters and input data
+[~,filters]=wavelet_factory_2d([size_signal,size_signal],filt_opt,scat_opt);
+
+%x=rand(32,32);
+filters=filters{1}.translation; 
+
+% Create the config specific to the dataset023
+[class,getImage,score_function,split_function,Wop,Wop_color,ds,filt_opt_color]=recover_dataset(option);
+
+x_train=getImage('train');
+x_test=getImage('test');
+
+% traning set!
+x_train = single(rgb2yuv(x_train));
+x_test = single(rgb2yuv(x_test));
+
+max_J=option.Exp.max_J;
+
+q=split_function();
+Y_train=q{1};
+Y_test=q{2};
+
+%% export
+
+fprintf ('train = %s, test = %s\n\n', num2str(size(x_train)), num2str(size(x_test)))
+
+fprintf('train data...\n');
+U_j_train = cell(1, max_J);
+
+for j=1:max_J
+    fprintf ('compute scale %d...\n', j)
+    U_j_train{j} = compute_J_scale(x_train, filters, j);
 end
 
-fprintf('Batch...\n');
-
-cnt=1;
-tic % We compute the scattering features
-for i=1:length(jobs)
-    nameJobFile=getnamejobfile(option,i,mergestruct(option.Exp,option.Layers));
-    for j=1:length(jobs{i})
-        disp(sprintf ('processing image n. %d/%d', cnt, nImages))
-        % Image reader
-        imageData=getImage(jobs{i}(j)); % The images are resized using bilinear interpolation
-        imageData=double(imageData);
-        yYUV=zeros(size(imageData),'single');
-
-        % If image is not color - happens only in Caltech
-        if(ismatrix(imageData))
-            yYUV(:,:,1)=single(imageData);
-            yYUV(:,:,2)=0;
-            yYUV(:,:,3)=0;
-            yYUV=single(yYUV);
-        else
-            yYUV =single(rgb2yuv(imageData));               
-        end
-        imy=yYUV(:,:,1);
-        imu=yYUV(:,:,2);
-        imv=yYUV(:,:,3);
-
-        imy=imresize(imy,[option.Layers.size,option.Layers.size]);
-        imu=imresize(imu,[option.Layers.size_color,option.Layers.size_color]);
-        imv=imresize(imv,[option.Layers.size_color,option.Layers.size_color]);
-
-        image{1} = imy; image{2} = imu; image{3} = imv;
-        if(option.Layers.color==1)
-            [~, U_y] =scat(imy,Wop);
-            [~, U_u] =scat(imu,Wop_color);
-            [~, U_v] =scat(imv,Wop_color);
-            U_coeff{1} = U_v; U_coeff{2} = U_u; U_coeff{3} = U_y;
-        else
-            U_coeff{1} = U_y;
-        end
-
-        U_features{cnt} = U_coeff;
-        all_images{cnt} = image;
-        cnt = cnt + 1;
-        if cnt == 10
-			disp ('storing first 10')
-			save('U_features_10_CIFAR10.mat', 'U_features')
-			save('images_10_CIFAR10.mat', 'all_images')
-            class10=class(1:10)
-            save('labels_10_CIFAR10.mat', 'class10')
-		end
-    end
+fprintf('test data...\n');
+U_j_test = cell(1, max_J);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+for j=1:max_J
+    fprintf ('compute scale %d...\n', j)
+    U_j_test{j} = compute_J_scale(x_test, filters, j);
 end
-fprintf(' .');
 
-timeScat=toc;
 
-disp('storing files')
-save('U_features_CIFAR10.mat', 'U_features')
-save('all_images_CIFAR10.mat', 'all_images')
-save('labels_CIFAR10.mat', 'class')
+fprintf('saving data...\n');
 
+save('x_train', 'x_train', '-v7.3') 
+save('x_test', 'x_test', '-v7.3') 
+save('Y_train', 'Y_train', '-v7.3')
+save('Y_test','Y_test', '-v7.3')
+save('U_j_train', 'U_j_train', '-v7.3')
+save('U_j_test','U_j_test', '-v7.3')
+
+
+%EOF
