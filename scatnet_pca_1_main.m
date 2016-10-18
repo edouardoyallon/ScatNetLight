@@ -55,8 +55,8 @@ max_J=option.Exp.max_J;
 
 
 if debug_set
-   x_train=x_train(:,:,:,1:30); 
-   x_test=x_test(:,:,:,1:30); 
+   x_train=x_train(:,:,:,1:150); 
+   x_test=x_test(:,:,:,1:150); 
 end
 
 fprintf ('\nLEARNING -------------------------------------------\n\n')
@@ -71,21 +71,20 @@ U_j = cell(1, max_J);
 for j=1:max_J
     fprintf ('compute scale %d...\n', j)
     U_j{j} = compute_J_scale(x_train, filters, j);
-    U_j_vect=tensor_2_vector_PCA(U_j{j});
-    %clear U_j
+    [U_j_vect, sz] = tensor_2_vector_PCA(U_j{j});
     fprintf ('standardization at scale %d...\n', j)
-    %U_j_vect=standardize_feature(U_j_vect');
-    %U_j_vect=U_j_vect';
+    U_j_vect = standardize_feature(U_j_vect');
+    U_j_vect = U_j_vect';
     fprintf ('PCA at scale %d...\n\n', j)
-    %[sv,d,F] = svd(U_j_vect, 'econ');
-    [F,~, d] = pca(U_j_vect'* U_j_vect);
+    [sv, d, F] = svd(U_j_vect'*U_j_vect, 'econ');
+    %[F,~, d] = pca(U_j_vect, 'Economy', true);
     clear U_j_vect
-    PCA_filters{j} = F;
-    PCA_evals{j}=d;
+    PCA_filters{j} = F;% ./ repmat(sqrt(diag(d)'), size(F, 1), 1);
+    PCA_evals{j} = diag (d);
 end
 
 %%
-option.Exp.PCA_eps_ratio=0.1;
+option.Exp.PCA_eps_ratio=0.001;
 eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
