@@ -15,7 +15,7 @@ size_signal=32;
 
 scat_opt.M=2;
 
-debug_set = 1;
+debug_set = 0;
 
 % First layer
 filt_opt.layer{1}.translation.J=option.Exp.max_J;
@@ -57,7 +57,7 @@ max_J=option.Exp.max_J;
 
 if debug_set
    x_train=x_train(:,:,:,1:300); 
-   x_test=x_test(:,:,:,1:300); 
+   x_test=x_test(:,:,:,1:100); 
 end
 
 fprintf ('\nLEARNING -------------------------------------------\n\n')
@@ -93,9 +93,17 @@ for j=1:max_J
     PCA_filters{j} = (F); 
     PCA_evals{j}=diag(d{j});
     
-    proj = project_PCA(Z_j, PCA_filters{j}, mu{j}, s{j}); %Z_j_vect * PCA_filters{j};
-
-       
+    proj=zeros(size(Z_j));
+    
+    sz = size(S_test, 2);
+    loops = ceil(size(x_train, 4) / sz);
+    idx=1;
+    for i = 1 : loops
+        IDX=idx:min([idx+sz-1,size(x_train,4)]);
+        proj(:,:,:,IDX) = project_PCA(Z_j(:,:,:,IDX), PCA_filters{j}, mu{j}, s{j}); %Z_j_vect * PCA_filters{j};
+        idx=idx+sz;
+    end
+    %proj = project_PCA(Z_j, PCA_filters{j}, mu{j}, s{j}); %Z_j_vect * PCA_filters{j};   
     S_j=abs(proj);
 end
 
