@@ -19,8 +19,11 @@ for j=1:J
     fprintf ('standardization at scale %d...\n', j)
     
     Z_j_vect=standardize_feature(Z_j_vect, mu{j}, D{j});
-    S_j=vector_2_tensor_PCA(Z_j_vect*PCA_filters{j}, sz);
+    S_j=abs(vector_2_tensor_PCA(Z_j_vect*PCA_filters{j}, sz));
 end
+
+
+%S_j=wavelet_2d(S_j,filters);
 end
 
 

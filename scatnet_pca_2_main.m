@@ -56,8 +56,8 @@ max_J=option.Exp.max_J;
 
 
 if debug_set
-   x_train=x_train(:,:,:,1:250); 
-   x_test=x_test(:,:,:,1:250); 
+   x_train=x_train(:,:,:,1:300); 
+   x_test=x_test(:,:,:,1:300); 
 end
 
 fprintf ('\nLEARNING -------------------------------------------\n\n')
@@ -73,10 +73,10 @@ mu=cell(1,max_J);
 d=cell(1,max_J);
 for j=1:max_J
     fprintf ('h filtering at scale %d...\n', j)
-    S_j_tilde = S_j; %haar_lp(S_j, j>2);
-    if j > 2
-       S_j_tilde=S_j_tilde(1:2:end,1:2:end, :, :); 
-    end
+    S_j_tilde = haar_lp(S_j, j>2);
+%     if j > 2
+%        S_j_tilde=S_j_tilde(1:2:end,1:2:end, :, :); 
+%     end
     fprintf ('compute scale %d...\n', j)
     U_j = compute_J_scale(x_train, filters, j);
     
@@ -93,12 +93,14 @@ for j=1:max_J
     fprintf ('SVD at scale %d...\n\n', j)
     [~,d{j},F] = svd(Z_j_vect'*Z_j_vect);
     clear U_j_vect
-    PCA_filters{j} = eye(size(F)); 
+    PCA_filters{j} = F; 
     PCA_evals{j}=diag(d{j});
     proj = Z_j_vect * PCA_filters{j};
        
-    S_j=vector_2_tensor_PCA(proj, sz);
+    S_j=abs(vector_2_tensor_PCA(proj, sz));
 end
+
+%S_j=wavelet_2d(S_j,filters);
 
 %%
 option.Exp.PCA_eps_ratio=0;
@@ -107,10 +109,10 @@ eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
 fprintf('testing...\n');
-%S_test = scat_PCA2(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J, mu, s);
+S_test = scat_PCA2(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J, mu, s);
 fprintf ('training... \n')
 S_train=S_j;
-S_test=S_train;
+
 
 train_size=size(S_train);
 S_train=reshape(S_train, [train_size(1)*train_size(2)*train_size(3), train_size(4)]);
@@ -120,11 +122,15 @@ S_test=reshape(S_test, [test_size(1)*test_size(2)*test_size(3), test_size(4)]);
 
 %%
 
-% fprintf('standardizing...')
-% [S_train, mu, D]=standardize_feature(S_train');
-% S_test=standardize_feature(S_test', mu, D);
-% S_train=S_train';
-% S_test=S_test';
+fprintf('standardizing...')
+[S_train, mu, D]=standardize_feature(S_train');
+S_test=standardize_feature(S_test', mu, D);
+S_train=S_train';
+S_test=S_test';
+
+%S_test=S_train(:,201:300);
+%S_train=S_train(:, 1:200);
+
 timeScat=toc;
 fprintf(['\nscattering processed in ' num2str(timeScat) 's\n']);
 %%
