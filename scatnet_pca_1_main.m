@@ -55,8 +55,8 @@ max_J=option.Exp.max_J;
 
 
 if debug_set
-   x_train=x_train(:,:,:,1:100); 
-   x_test=x_test(:,:,:,1:100); 
+   x_train=x_train(:,:,:,1:300); 
+   x_test=x_test(:,:,:,1:300); 
 end
 
 %% learning PCA filters
@@ -74,7 +74,7 @@ U_j = cell(1, max_J);
 for j=1:max_J
     fprintf ('compute scale %d...\n', j)
     U_j{j} = compute_J_scale(x_train, filters, j);
-    [U_j_vect, sz] = tensor_2_vector_PCA(U_j{j});
+    U_j_vect = tensor_2_vector_PCA(U_j{j});
     fprintf ('standardization at scale %d...\n', j)
     [U_j_vect, mus{j}, et{j}] = standardize_feature(U_j_vect);
     fprintf ('PCA at scale %d...\n\n', j)

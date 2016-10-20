@@ -74,9 +74,6 @@ d=cell(1,max_J);
 for j=1:max_J
     fprintf ('h filtering at scale %d...\n', j)
     S_j_tilde = haar_lp(S_j, j>2);
-%     if j > 2
-%        S_j_tilde=S_j_tilde(1:2:end,1:2:end, :, :); 
-%     end
     fprintf ('compute scale %d...\n', j)
     U_j = compute_J_scale(x_train, filters, j);
     
@@ -93,11 +90,13 @@ for j=1:max_J
     fprintf ('SVD at scale %d...\n\n', j)
     [~,d{j},F] = svd(Z_j_vect'*Z_j_vect);
     clear U_j_vect
-    PCA_filters{j} = F; 
+    PCA_filters{j} = (F); 
     PCA_evals{j}=diag(d{j});
-    proj = Z_j_vect * PCA_filters{j};
+    
+    proj = project_PCA(Z_j, PCA_filters{j}, mu{j}, s{j}); %Z_j_vect * PCA_filters{j};
+
        
-    S_j=abs(vector_2_tensor_PCA(proj, sz));
+    S_j=abs(proj);
 end
 
 %S_j=wavelet_2d(S_j,filters);

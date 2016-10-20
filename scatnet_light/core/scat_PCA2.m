@@ -12,14 +12,11 @@ for j=1:J
     
     Z_j = cat(3, U_j, S_j_tilde);
     
-    [Z_j_vect,sz]=tensor_2_vector_PCA(Z_j);
-    clear U_j
-    
     clear S_j_tilde
     fprintf ('standardization at scale %d...\n', j)
     
-    Z_j_vect=standardize_feature(Z_j_vect, mu{j}, D{j});
-    S_j=abs(vector_2_tensor_PCA(Z_j_vect*PCA_filters{j}, sz));
+    proj = project_PCA(Z_j, PCA_filters{j}, mu{j}, D{j});
+    S_j=abs(proj);
 end
 
 
