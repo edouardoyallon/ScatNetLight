@@ -8,8 +8,8 @@ tic;
 q=split_function();
 
 if debug_set
-    labels_train=q{1}(1:50);
-    labels_test=q{2}(1:50);
+    labels_train=q{1}(1:100);
+    labels_test=q{2}(1:100);
 else
     labels_train=q{1};
     labels_test=q{2};

@@ -1,5 +1,5 @@
 
-function S_j = scat_PCA2(x, filters, PCA_filters, PCA_evals, eps_ratio, J,D)
+function S_j = scat_PCA2(x, filters, PCA_filters, PCA_evals, eps_ratio, J, mu, D)
   
 S_j = x;
 
@@ -18,12 +18,8 @@ for j=1:J
     clear S_j_tilde
     fprintf ('standardization at scale %d...\n', j)
     
-    Z_j_vect=standardize_feature(Z_j_vect',zeros(size(D{j})),D{j});
-    Z_j_vect=Z_j_vect';
-    Z_j=vector_2_tensor_PCA(Z_j_vect,sz);
-    clear U_j_vect
-
-    S_j=project_PCA(Z_j, PCA_filters{j});
+    Z_j_vect=standardize_feature(Z_j_vect, mu{j}, D{j});
+    S_j=vector_2_tensor_PCA(Z_j_vect*PCA_filters{j}, sz);
 end
 end
 

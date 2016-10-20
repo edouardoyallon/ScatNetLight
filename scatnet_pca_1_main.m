@@ -16,7 +16,7 @@ size_signal = 32;
 
 scat_opt.M = 2;
 
-debug_set = 0;
+debug_set = 1;
 
 % First layer
 filt_opt.layer{1}.translation.J=option.Exp.max_J;
@@ -55,8 +55,8 @@ max_J=option.Exp.max_J;
 
 
 if debug_set
-   x_train=x_train(:,:,:,1:50); 
-   x_test=x_test(:,:,:,1:50); 
+   x_train=x_train(:,:,:,1:100); 
+   x_test=x_test(:,:,:,1:100); 
 end
 
 %% learning PCA filters
@@ -65,6 +65,8 @@ fprintf ('size of experiment: train = %s, test = %s\n\n', num2str(size(x_train))
 
 PCA_filters=cell(1,max_J);
 PCA_evals=cell(1,max_J);
+mus = cell(1, max_J);
+et = cell(1, max_J);
 
 tic
 U_j = cell(1, max_J);
@@ -74,7 +76,7 @@ for j=1:max_J
     U_j{j} = compute_J_scale(x_train, filters, j);
     [U_j_vect, sz] = tensor_2_vector_PCA(U_j{j});
     fprintf ('standardization at scale %d...\n', j)
-    [U_j_vect, mu, et] = standardize_feature(U_j_vect);
+    [U_j_vect, mus{j}, et{j}] = standardize_feature(U_j_vect);
     fprintf ('PCA at scale %d...\n\n', j)
     [sv, d, F] = svd(U_j_vect'*U_j_vect, 'econ');
     %[F,~, d] = pca(U_j_vect, 'Economy', true);
@@ -89,7 +91,7 @@ eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
 fprintf('testing...\n');
-S_test = scat_PCA1(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J, true);
+S_test = scat_PCA1(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J, mus, et, true);
 fprintf ('training... \n')
 sz = size(S_test, 2);
 loops = ceil(size(x_train, 4) / sz);
@@ -102,7 +104,7 @@ for i = 1 : loops
         U_j_batch{j}=U_j{j}(:,:,:,IDX);
     end
 
-    S_train(:,IDX) = scat_PCA1(U_j_batch, filters, PCA_filters, PCA_evals, eps_ratio, max_J, false);
+    S_train(:,IDX) = scat_PCA1(U_j_batch, filters, PCA_filters, PCA_evals, eps_ratio, max_J, mus, et, false);
     idx=idx+sz;
 end
 

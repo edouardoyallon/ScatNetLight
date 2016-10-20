@@ -1,0 +1,11 @@
+load ('F_J3_debug')
+figure 
+subplot(311)
+F1col = reshape (permute (reshape(F(1:384, 4), [8 8 2 3]), [1 3 2 4]), [16 24])
+imagesc (abs(F1col))
+subplot(312)
+F2col = reshape (permute (reshape(F(1:384, 5), [8 8 2 3]), [1 3 2 4]), [16 24])
+imagesc (abs(F2col))
+subplot(313)
+F3col = reshape (permute (reshape(F(1:384, 6), [8 8 2 3]), [1 3 2 4]), [16 24])
+imagesc (abs(F3col))

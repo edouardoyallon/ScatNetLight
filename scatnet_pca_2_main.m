@@ -56,8 +56,8 @@ max_J=option.Exp.max_J;
 
 
 if debug_set
-   x_train=x_train(:,:,:,1:30); 
-   x_test=x_test(:,:,:,1:30); 
+   x_train=x_train(:,:,:,1:250); 
+   x_test=x_test(:,:,:,1:250); 
 end
 
 fprintf ('\nLEARNING -------------------------------------------\n\n')
@@ -73,8 +73,10 @@ mu=cell(1,max_J);
 d=cell(1,max_J);
 for j=1:max_J
     fprintf ('h filtering at scale %d...\n', j)
-    S_j_tilde = haar_lp(S_j, j>2);
-     
+    S_j_tilde = S_j; %haar_lp(S_j, j>2);
+    if j > 2
+       S_j_tilde=S_j_tilde(1:2:end,1:2:end, :, :); 
+    end
     fprintf ('compute scale %d...\n', j)
     U_j = compute_J_scale(x_train, filters, j);
     
@@ -86,21 +88,16 @@ for j=1:max_J
     clear S_j_tilde
     fprintf ('standardization at scale %d...\n', j)
     
-    [Z_j_vect,mu{j},s{j}]=standardize_feature(Z_j_vect');
-    Z_j_vect=Z_j_vect';
+    [Z_j_vect,mu{j},s{j}]=standardize_feature(Z_j_vect);
+    
     fprintf ('SVD at scale %d...\n\n', j)
     [~,d{j},F] = svd(Z_j_vect'*Z_j_vect);
     clear U_j_vect
-    PCA_filters{j} = eye(size(F')); %F'; %FIXME normalize flt
+    PCA_filters{j} = eye(size(F)); 
     PCA_evals{j}=diag(d{j});
-   
-    [Z_j_vect,sz]=tensor_2_vector_PCA(Z_j);    
+    proj = Z_j_vect * PCA_filters{j};
        
-    Z_j_vect=standardize_feature(Z_j_vect',zeros(size(s{j})),s{j});
-    Z_j_vect=Z_j_vect';
-    Z_j=vector_2_tensor_PCA(Z_j_vect,sz);
-    
-    S_j=project_PCA(Z_j, PCA_filters{j});
+    S_j=vector_2_tensor_PCA(proj, sz);
 end
 
 %%
@@ -110,9 +107,10 @@ eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
 fprintf('testing...\n');
-S_test = scat_PCA2(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J,s);
+%S_test = scat_PCA2(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J, mu, s);
 fprintf ('training... \n')
 S_train=S_j;
+S_test=S_train;
 
 train_size=size(S_train);
 S_train=reshape(S_train, [train_size(1)*train_size(2)*train_size(3), train_size(4)]);
@@ -120,15 +118,13 @@ test_size=size(S_test);
 S_test=reshape(S_test, [test_size(1)*test_size(2)*test_size(3), test_size(4)]);
 
 
-%% log here
-
 %%
 
-fprintf('standardizing...')
-[S_train, mu, D]=standardize_feature(S_train');
-S_test=standardize_feature(S_test', mu, D);
-S_train=S_train';
-S_test=S_test';
+% fprintf('standardizing...')
+% [S_train, mu, D]=standardize_feature(S_train');
+% S_test=standardize_feature(S_test', mu, D);
+% S_train=S_train';
+% S_test=S_test';
 timeScat=toc;
 fprintf(['\nscattering processed in ' num2str(timeScat) 's\n']);
 %%

@@ -1,7 +1,7 @@
 function [feature,mF,stdF]=standardize_feature(feature,mF,stdF) 
 
 if(nargin<3)
-mF=mean(feature);
+        mF=mean(feature);
         stdF=std(feature);
         stdF(stdF==0)=1;
 end
