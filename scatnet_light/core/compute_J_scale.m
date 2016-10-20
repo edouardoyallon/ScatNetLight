@@ -22,7 +22,7 @@ function U = compute_J_scale(x, filters, J)
         %size(U_j_2.signal{1})
         %size(U_j_1.signal{end})
 
-        U = cat(3, reshape(U_j_2.signal{1}, [s1, s2, s3,s4]), reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]));
+        U = cat(3, reshape(U_j_2.signal{1}, [s1, s2, s3,s4])); %, reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]));
     else
        U=reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]);
     end

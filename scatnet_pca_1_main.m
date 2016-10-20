@@ -71,7 +71,7 @@ et = cell(1, max_J);
 tic
 U_j = cell(1, max_J);
 
-for j=1:max_J
+for j=2:max_J
     fprintf ('compute scale %d...\n', j)
     U_j{j} = compute_J_scale(x_train, filters, j);
     U_j_vect = tensor_2_vector_PCA(U_j{j});
@@ -86,7 +86,7 @@ for j=1:max_J
 end
 
 %% computing testing and training data
-option.Exp.PCA_eps_ratio=0.01;
+option.Exp.PCA_eps_ratio=0;
 eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
@@ -100,7 +100,7 @@ idx=1;
 for i = 1 : loops
     IDX=idx:min([idx+sz-1,size(x_train,4)]);
     U_j_batch = cell(1, max_J);
-    for j = 1 : max_J
+    for j = 2 : max_J
         U_j_batch{j}=U_j{j}(:,:,:,IDX);
     end
 
