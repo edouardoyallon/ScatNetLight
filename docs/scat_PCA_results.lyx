@@ -2193,7 +2193,7 @@ Wel didn't optimize the parameters for the SVM and maybe we could get some
 \end_layout
 
 \begin_layout Standard
-But, in the end, it seems to me that PCA is not able at the moment to capture
+But, in the end, it seems to us that PCA is not able at the moment to capture
  very salient information.
  The thresholding reduces the variance but doesn't increase the performance,
  showing that probably the gaussian SVM is able to cope with it alone.
