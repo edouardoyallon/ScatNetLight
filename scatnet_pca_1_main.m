@@ -9,9 +9,13 @@ option.Exp.Type='cifar10_PCA';
 option.Exp.n_batches=1;
 option.Exp.max_J=3;
 option.Exp.log_features=false;
-option.Exp.patch_size=[4 4];
+option.Exp.patch_size=[1 1];
+option.Exp.PCA_eps_ratio=0;
+option.Exp.random_rotations=2;
 option.General.path2database='./cifar-10-batches-mat';
 option.General.path2outputs='./Output/';
+option.Classification.C=10;
+option.Classification.SIGMA_v=1;
 
 size_signal = 32;
 
@@ -53,16 +57,24 @@ x_train = single(rgb2yuv(x_train));
 x_test = single(rgb2yuv(x_test));
 
 max_J=option.Exp.max_J;
-
+eps_ratio = option.Exp.PCA_eps_ratio;
 
 if debug_set
-   x_train=x_train(:,:,:,1:10); 
-   x_test=x_test(:,:,:,1:10); 
+   x_train=x_train(:,:,:,1:100); 
+   x_test=x_test(:,:,:,1:100); 
 end
+
+
+orig_train_size = size(x_train);
+
+x_train = addRandomRotations(x_train, option.Exp.random_rotations, 'crop');
+
 
 %% learning PCA filters
 fprintf ('\nLEARNING -------------------------------------------\n\n')
-fprintf ('size of experiment: train = %s, test = %s\n\n', num2str(size(x_train)), num2str(size(x_test)))
+fprintf ('size of experiment: train = %s, test = %s\n\n', num2str(orig_train_size), num2str(size(x_test)))
+fprintf ('max J = %d, PCA epsilon = %g, C = %g, sigma = %g\n', max_J, eps_ratio, option.Classification.C, option.Classification.SIGMA_v);
+fprintf ('patch size = %s, random rotations = %d\n\n', num2str(option.Exp.patch_size), option.Exp.random_rotations);
 
 PCA_filters=cell(1,max_J);
 PCA_evals=cell(1,max_J);
@@ -82,23 +94,28 @@ for j=1:max_J
     fprintf ('PCA at scale %d...\n\n', j)
     [sv, d, F] = svd(U_j_vect'*U_j_vect, 'econ');
     %[F,~, d] = pca(U_j_vect, 'Economy', true);
-    [idx, F1] = kmeans(abs(U_j_vect), 50);
     clear U_j_vect
-    PCA_filters{j} = F1;% ./ repmat(sqrt(diag(d)'), size(F, 1), 1);
-    PCA_evals{j} = zeros(size(d)); %diag (d);
+    PCA_filters{j} = F; % ./ repmat(sqrt(diag(d)'), size(F, 1), 1);
+    PCA_evals{j} = diag (d);
 end
 
 %% computing testing and training data
-option.Exp.PCA_eps_ratio=0.001;
-eps_ratio = option.Exp.PCA_eps_ratio;
 
 fprintf ('CLASSIFICATION -------------------------------------------\n\n')
 fprintf('testing...\n');
 S_test = scat_PCA1(x_test, filters, PCA_filters, PCA_evals, eps_ratio, max_J, mus, et, true, patch_size);
+
 fprintf ('training... \n')
+% remove data augmentation
+x_train=x_train(:,:,:,1:orig_train_size(4));
+for j = 1 : max_J
+    U_j{j}=U_j{j}(:,:,:,1:orig_train_size(4));
+end
 sz = size(S_test, 2);
 loops = ceil(size(x_train, 4) / sz);
 S_train=zeros(size(S_test,1),size(x_train,4));
+
+
 idx=1;
 for i = 1 : loops
     IDX=idx:min([idx+sz-1,size(x_train,4)]);
@@ -130,9 +147,6 @@ fprintf(['\nscattering processed in ' num2str(timeScat) 's\n']);
 %% svm classification
 
 fprintf('classifying...\n')
-
-option.Classification.C=10;
-option.Classification.SIGMA_v=1;
 
 dimension_reduction_and_SVM_PCA
 
