@@ -9,7 +9,7 @@ option.Exp.Type='cifar10_PCA';
 option.Exp.n_batches=1;
 option.Exp.max_J=3;
 option.Exp.log_features=false;
-option.Exp.patch_size=[8 4];
+option.Exp.patch_size=[4 4];
 option.General.path2database='./cifar-10-batches-mat';
 option.General.path2outputs='./Output/';
 
@@ -56,8 +56,8 @@ max_J=option.Exp.max_J;
 
 
 if debug_set
-   x_train=x_train(:,:,:,1:100); 
-   x_test=x_test(:,:,:,1:100); 
+   x_train=x_train(:,:,:,1:10); 
+   x_test=x_test(:,:,:,1:10); 
 end
 
 %% learning PCA filters
@@ -82,9 +82,10 @@ for j=1:max_J
     fprintf ('PCA at scale %d...\n\n', j)
     [sv, d, F] = svd(U_j_vect'*U_j_vect, 'econ');
     %[F,~, d] = pca(U_j_vect, 'Economy', true);
+    [idx, F1] = kmeans(abs(U_j_vect), 50);
     clear U_j_vect
-    PCA_filters{j} = F;% ./ repmat(sqrt(diag(d)'), size(F, 1), 1);
-    PCA_evals{j} = diag (d);
+    PCA_filters{j} = F1;% ./ repmat(sqrt(diag(d)'), size(F, 1), 1);
+    PCA_evals{j} = zeros(size(d)); %diag (d);
 end
 
 %% computing testing and training data

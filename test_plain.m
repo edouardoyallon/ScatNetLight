@@ -18,28 +18,6 @@ scat_opt.M=2;
 
 debug_set = 1;
 
-% First layer
-filt_opt.layer{1}.translation.J=option.Exp.max_J;
-filt_opt.layer{1}.translation.L=8;
-scat_opt.layer{1}.translation.oversampling=0;
-filt_opt.layer{1}.translation.n_wavelet_per_octave=1;
-
-% Second layer
-% Translation
-filt_opt.layer{2}.translation.J=option.Exp.max_J;
-filt_opt.layer{2}.translation.L=8;
-scat_opt.layer{2}.translation.oversampling=0;
-scat_opt.layer{2}.translation.type='t';
-
-% Third layer(copy of the previous one)
-filt_opt.layer{3}=filt_opt.layer{2};
-scat_opt.layer{3}=scat_opt.layer{2};
-
-%%
-[~,filters]=wavelet_factory_2d([size_signal,size_signal],filt_opt,scat_opt);
-
-%x=rand(32,32);
-filters=filters{1}.translation; 
 
 % Create the config specific to the dataset023
 [class,getImage,score_function,split_function,Wop,Wop_color,ds,filt_opt_color]=recover_dataset(option);
@@ -87,10 +65,5 @@ option.Classification.C=10;
 option.Classification.SIGMA_v=1;
 
 dimension_reduction_and_SVM_PCA
-
-save('PCA_filters', 'PCA_filters') 
-save('PCA_evals', 'PCA_evals') 
-save('result', 'ans')
-save('confmat','confusion_matrix')
 
 %EOF
