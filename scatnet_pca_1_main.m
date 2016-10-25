@@ -15,9 +15,9 @@ option.Exp.n_batches = 1;
 option.Exp.max_J = 3;
 option.Exp.log_features = false;
 option.Exp.patch_size = [1 1];
-option.Exp.PCA_eps_ratio = 0;
+option.Exp.PCA_eps_ratio = 0.0001;
 option.Exp.random_rotations = 0;
-option.Exp.batch_size = 100;
+option.Exp.batch_size = 1000;
 option.General.path2database = './cifar-10-batches-mat';
 option.General.path2outputs = './Output/';
 option.Classification.C = 10;
@@ -97,7 +97,7 @@ tic
 for j=1:max_J
     loops = ceil(size(x_train, 4) / batch_size);
     
-    idx=1;
+    idx = 1;
     for r = 1 : loops
         fprintf('computing scale %d, batch %d/%d...\n', j, r, loops)
         IDX = idx:min ([idx + batch_size - 1, size(x_train, 4)]);
@@ -118,13 +118,20 @@ end
 fprintf ('--- CLASSIFICATION ---\n\n')
 fprintf('testing...\n');
 
-idx=1;
+idx = 1;
 loops = ceil(size(x_test, 4) / batch_size);
+
+fprintf ('\tguide samples...\n') %to infer proper size
+guide = scat_PCA1(x_test(:, :, :, 1:2), filters, PCA_filters, ...
+        PCA_evals, eps_ratio, max_J, true, patch_size);
+    
+S_test = zeros(size(guide, 1), size(x_test, 4));
 
 for r = 1 : loops
     fprintf('\tbatch %d/%d...\n', r, loops)
     IDX = idx:min([idx + batch_size - 1, size(x_test, 4)]);
-    S_test(:, IDX) = scat_PCA1(x_test(:, :, :, IDX), filters, PCA_filters, ...
+    bs = x_test(:, :, :, IDX);
+    S_test(:, IDX) = scat_PCA1(bs, filters, PCA_filters, ...
         PCA_evals, eps_ratio, max_J, true, patch_size);
     idx = idx + batch_size;
 end
@@ -140,7 +147,7 @@ end
 loops = ceil(size(x_train, 4) / batch_size);
 S_train=zeros(size(S_test, 1), size(x_train, 4));
 
-idx=1;
+idx = 1;
 for i = 1 : loops
     IDX = idx:min([idx + batch_size - 1, size(x_train, 4)]);
     fprintf('\tbatch %d/%d...\n', i, loops)
