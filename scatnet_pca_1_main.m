@@ -1,6 +1,6 @@
 %% Main file for Scat-PCA type 1
 
-fprintf ('Scat-PCA type 1\n\n');
+fprintf ('[Scat-PCA type 1]\n\n');
 fprintf('loading options...\n');
 
 load_path_software
@@ -72,18 +72,22 @@ end
 % store original size before data augmentation
 orig_train_size = size(x_train);
 
-% data augmentation
-fprintf ('\ndata augmentation...\n')
-x_train = addRandomRotations(x_train, option.Exp.random_rotations, 'bilinear');
-
-%% learning PCA filters
 fprintf ('\n--- LEARNING ---\n\n')
-fprintf ('size of experiment:\n\ttrain = %s\n\ttest = %s\n\n', ... 
+fprintf ('size of experiment:\n\ttrain = %s\n\ttest  = %s\n\n', ... 
     num2str(orig_train_size), num2str(size(x_test)))
-fprintf ('max J      = %d, PCA epsilon      = %g, C = %g, sigma = %g\n', ...
+fprintf ('max J = %d, PCA epsilon = %g, C = %g, sigma = %g\n', ...
     max_J, eps_ratio, option.Classification.C, option.Classification.SIGMA_v);
 fprintf ('patch size = %s, random rotations = %d\n\n', num2str(option.Exp.patch_size), ...
     option.Exp.random_rotations);
+
+% data augmentation
+if option.Exp.random_rotations
+    fprintf ('data augmentation...\n\n')
+    x_train = addRandomRotations(x_train, option.Exp.random_rotations, 'bilinear');
+end
+
+%% learning PCA filters
+
 
 PCA_filters = cell(1,max_J);
 PCA_evals = cell(1,max_J);
@@ -114,13 +118,14 @@ end
 
 fprintf ('--- CLASSIFICATION ---\n\n')
 fprintf('testing...\n');
+
 idx=1;
 loops = ceil(size(x_test, 4) / batch_size);
 
 for r = 1 : loops
     fprintf('\tbatch %d/%d...\n', r, loops)
     IDX = idx:min([idx + batch_size - 1, size(x_test, 4)]);
-    S_test(:,IDX) = scat_PCA1(x_test(:, :, :, IDX), filters, PCA_filters, ...
+    S_test(:, IDX) = scat_PCA1(x_test(:, :, :, IDX), filters, PCA_filters, ...
         PCA_evals, eps_ratio, max_J, true, patch_size);
     idx = idx + batch_size;
 end
@@ -150,6 +155,11 @@ for i = 1 : loops
     idx = idx + batch_size;
 end
 
+timeScat = toc;
+
+fprintf(['\nscattering processed in ' num2str(timeScat) 's\n\n']);
+
+
 %% log features
 
 if option.Exp.log_features
@@ -159,14 +169,12 @@ end
 
 %% standardization
 
-fprintf('standardizing...')
+fprintf('standardizing...\n')
 [S_train, mu, D] = standardize_feature(S_train');
 S_test = standardize_feature(S_test', mu, D);
 S_train = S_train';
 S_test = S_test';
-timeScat = toc;
 
-fprintf(['\nscattering processed in ' num2str(timeScat) 's\n']);
 
 %% svm classification
 
@@ -176,7 +184,7 @@ dimension_reduction_and_SVM_PCA
 
 save('PCA_filters', 'PCA_filters') 
 save('PCA_evals', 'PCA_evals') 
-save('result', 'ans')
+save('result', 'score')
 save('confmat','confusion_matrix')
 
 %EOF

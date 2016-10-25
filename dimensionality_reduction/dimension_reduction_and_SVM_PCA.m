@@ -32,11 +32,14 @@ kernel_train = kernelmatrix('rbf', outputTrainData, [], SIGMA);
 
 % confusion_matrix
 [confusion_matrix] = SVM_1vsALL_wrapper(labels_train, labels_test, kernel_train, kernel_test, C);
-score_function(confusion_matrix)
+
+score = score_function(confusion_matrix);
 
 
 timeToClassify = toc;
 
-fprintf('\naccuracy = %d, classified in: %g\n', ans, num2str(timeToClassify));
+fprintf(['classified in: ', num2str(timeToClassify) 's\n\n']);
+
+fprintf ('*** total accuracy = %g ***\n', score)
 
 %% eof
