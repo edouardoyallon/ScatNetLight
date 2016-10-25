@@ -11,7 +11,7 @@ option.Exp.max_J=3;
 option.Exp.log_features=false;
 option.Exp.patch_size=[1 1];
 option.Exp.PCA_eps_ratio=0;
-option.Exp.random_rotations=2;
+option.Exp.random_rotations=3;
 option.General.path2database='./cifar-10-batches-mat';
 option.General.path2outputs='./Output/';
 option.Classification.C=10;
@@ -60,14 +60,14 @@ max_J=option.Exp.max_J;
 eps_ratio = option.Exp.PCA_eps_ratio;
 
 if debug_set
-   x_train=x_train(:,:,:,1:100); 
-   x_test=x_test(:,:,:,1:100); 
+   x_train=x_train(:,:,:,1:500); 
+   x_test=x_test(:,:,:,1:500); 
 end
 
 
 orig_train_size = size(x_train);
 
-x_train = addRandomRotations(x_train, option.Exp.random_rotations, 'crop');
+x_train = addRandomRotations(x_train, option.Exp.random_rotations, 'bilinear');
 
 
 %% learning PCA filters
