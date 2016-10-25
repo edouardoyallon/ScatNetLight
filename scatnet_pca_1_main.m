@@ -8,20 +8,18 @@ option.Exp=struct;
 option.Exp.Type='cifar10_PCA';
 option.Exp.n_batches=1;
 option.Exp.max_J=3;
-option.Exp.log_features=false;
+option.Exp.log_features=true;
 option.Exp.patch_size=[1 1];
 option.Exp.PCA_eps_ratio=0;
-option.Exp.random_rotations=3;
+option.Exp.random_rotations=0;
+option.Exp.batch_size = 1000;
 option.General.path2database='./cifar-10-batches-mat';
 option.General.path2outputs='./Output/';
 option.Classification.C=10;
 option.Classification.SIGMA_v=1;
 
 size_signal = 32;
-batch_size = 100;
-
 scat_opt.M = 2;
-
 debug_set = 1;
 
 % First layer
@@ -59,6 +57,7 @@ x_test = single(rgb2yuv(x_test));
 
 max_J=option.Exp.max_J;
 eps_ratio = option.Exp.PCA_eps_ratio;
+batch_size = option.Exp.batch_size;
 
 if debug_set
    x_train=x_train(:,:,:,1:500); 
@@ -91,7 +90,8 @@ for j=1:max_J
     U_j{j} = compute_J_scale(x_train, filters, j);
     U_j_vect = tensor_2_vector_PCA(U_j{j}, patch_size);
     fprintf ('standardization at scale %d...\n', j)
-    [U_j_vect, mus{j}, et{j}] = standardize_feature(U_j_vect);
+    %[U_j_vect, mus{j}, et{j}] = standardize_feature(U_j_vect');
+    U_j_vect = bsxfun (@minus, U_j_vect, mean (U_j_vect, 2));
     fprintf ('PCA at scale %d...\n\n', j)
     [sv, d, F] = svd(U_j_vect'*U_j_vect, 'econ');
     %[F,~, d] = pca(U_j_vect, 'Economy', true);
@@ -116,17 +116,16 @@ end
 loops = ceil(size(x_train, 4) / batch_size);
 S_train=zeros(size(S_test,1),size(x_train,4));
 
-
 idx=1;
 for i = 1 : loops
-    IDX=idx:min([idx+sz-1,size(x_train,4)]);
+    IDX=idx:min([idx+batch_size-1,size(x_train,4)]);
     U_j_batch = cell(1, max_J);
     for j = 1 : max_J
         U_j_batch{j}=U_j{j}(:,:,:,IDX);
     end
 
     S_train(:,IDX) = scat_PCA1(U_j_batch, filters, PCA_filters, PCA_evals, eps_ratio, max_J, mus, et, false, patch_size);
-    idx=idx+sz;
+    idx=idx+batch_size;
 end
 
 %% log features
