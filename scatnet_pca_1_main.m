@@ -16,8 +16,9 @@ option.Exp.max_J = 3;
 option.Exp.log_features = false;
 option.Exp.patch_size = [1 1];
 option.Exp.PCA_eps_ratio = 0.0001;
-option.Exp.random_rotations = 0;
+option.Exp.random_rotations = 2;
 option.Exp.batch_size = 1000;
+option.Exp.second_only = true;
 option.General.path2database = './cifar-10-batches-mat';
 option.General.path2outputs = './Output/';
 option.Classification.C = 10;
@@ -59,6 +60,13 @@ x_test = single(rgb2yuv(x_test));
 
 % local copies
 max_J = option.Exp.max_J;
+second_only = option.Exp.second_only;
+if second_only
+    min_J = 2;
+else
+    min_J = 1;
+end
+
 eps_ratio = option.Exp.PCA_eps_ratio;
 batch_size = option.Exp.batch_size;
 patch_size = option.Exp.patch_size;
@@ -89,19 +97,20 @@ end
 %% learning PCA filters
 
 
-PCA_filters = cell(1,max_J);
-PCA_evals = cell(1,max_J);
+PCA_filters = cell(1, max_J);
+PCA_evals = cell(1, max_J);
 U_j = cell(1, max_J);
 
 tic
-for j=1:max_J
+for j = min_J:max_J
     loops = ceil(size(x_train, 4) / batch_size);
     
     idx = 1;
     for r = 1 : loops
         fprintf('computing scale %d, batch %d/%d...\n', j, r, loops)
         IDX = idx:min ([idx + batch_size - 1, size(x_train, 4)]);
-        U_j{j}(:, :, :, IDX) = compute_J_scale(x_train(:, :, :, IDX), filters, j);
+        U_j{j}(:, :, :, IDX) = compute_J_scale(x_train(:, :, :, IDX), filters, ...
+            j, second_only);
         idx = idx + batch_size;
     end
     U_j_vect = tensor_2_vector_PCA(U_j{j}, patch_size);
@@ -123,7 +132,7 @@ loops = ceil(size(x_test, 4) / batch_size);
 
 fprintf ('\tguide samples...\n') %to infer proper size
 guide = scat_PCA1(x_test(:, :, :, 1:2), filters, PCA_filters, ...
-        PCA_evals, eps_ratio, max_J, true, patch_size);
+        PCA_evals, eps_ratio, max_J, true, patch_size, second_only);
     
 S_test = zeros(size(guide, 1), size(x_test, 4));
 
@@ -132,16 +141,18 @@ for r = 1 : loops
     IDX = idx:min([idx + batch_size - 1, size(x_test, 4)]);
     bs = x_test(:, :, :, IDX);
     S_test(:, IDX) = scat_PCA1(bs, filters, PCA_filters, ...
-        PCA_evals, eps_ratio, max_J, true, patch_size);
+        PCA_evals, eps_ratio, max_J, true, patch_size, second_only);
     idx = idx + batch_size;
 end
 
 fprintf ('training... \n')
 
 % remove data augmentation
-x_train=x_train(:, :, :, 1:orig_train_size(4));
-for j = 1 : max_J
-    U_j{j}=U_j{j}(:, :, :, 1:orig_train_size(4));
+if option.Exp.random_rotations
+    x_train = x_train(:, :, :, 1:orig_train_size(4));
+    for j = min_J : max_J
+        U_j{j}=U_j{j}(:, :, :, 1:orig_train_size(4));
+    end
 end
 
 loops = ceil(size(x_train, 4) / batch_size);
@@ -152,12 +163,12 @@ for i = 1 : loops
     IDX = idx:min([idx + batch_size - 1, size(x_train, 4)]);
     fprintf('\tbatch %d/%d...\n', i, loops)
     U_j_batch = cell(1, max_J);
-    for j = 1 : max_J
+    for j = min_J : max_J
         U_j_batch{j} = U_j{j}(:, :, :, IDX);
     end
 
     S_train(:, IDX) = scat_PCA1(U_j_batch, filters, PCA_filters, PCA_evals, ... 
-        eps_ratio, max_J, false, patch_size);
+        eps_ratio, max_J, false, patch_size, second_only);
     idx = idx + batch_size;
 end
 

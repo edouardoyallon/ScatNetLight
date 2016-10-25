@@ -1,4 +1,4 @@
-function U = compute_J_scale(x, filters, J)
+function U = compute_J_scale(x, filters, J, second_only)
     filters_j = select_filters_at_J (filters, J);
     
     filters_j{1}.meta.Q=1;
@@ -19,7 +19,12 @@ function U = compute_J_scale(x, filters, J)
         [~, U_j_2] = wavelet_layer_2_2d (U_j_1, filters_j{2}) ;
         s3= numel(U_j_2.signal{1})/(s1*s2*s4);
 
-        U = cat(3, reshape(U_j_2.signal{1}, [s1, s2, s3,s4]), reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]));
+        if second_only
+        	U = cat(3, reshape(U_j_2.signal{1}, [s1, s2, s3,s4]));
+        else 
+            U = cat(3, reshape(U_j_2.signal{1}, [s1, s2, s3,s4]), ...
+                reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]));
+        end
     else
        U=reshape(U_j_1.signal{end}, [s1, s2, s3p,s4]);
     end
