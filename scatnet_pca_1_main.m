@@ -66,7 +66,7 @@ patch_size = option.Exp.patch_size;
 % cut data for debugging
 if debug_set
    x_train = x_train(:, :, :, 1:500); 
-   x_test = x_test(:, :, :, 1:500); 
+   x_test  = x_test (:, :, :, 1:500); 
 end
 
 % store original size before data augmentation
@@ -95,12 +95,11 @@ U_j = cell(1, max_J);
 
 tic
 for j=1:max_J
-    fprintf ('compute scale %d...\n', j)
     loops = ceil(size(x_train, 4) / batch_size);
     
     idx=1;
     for r = 1 : loops
-        fprintf('\tbatch %d/%d...\n', r, loops)
+        fprintf('computing scale %d, batch %d/%d...\n', j, r, loops)
         IDX = idx:min ([idx + batch_size - 1, size(x_train, 4)]);
         U_j{j}(:, :, :, IDX) = compute_J_scale(x_train(:, :, :, IDX), filters, j);
         idx = idx + batch_size;
