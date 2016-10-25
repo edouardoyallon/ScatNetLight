@@ -10,9 +10,6 @@ function xaug = addRandomRotations(x, nrot, mode)
         xcrop=xrot(16:47,16:47,:,:);
         p = sz(4)*ct;
         e = p + sz(4);
-        p
-        e
-        
         xaug(:,:,:,p+1:e) = xcrop;
         ct = ct + 1;
     end

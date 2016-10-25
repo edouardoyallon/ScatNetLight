@@ -18,6 +18,7 @@ option.Classification.C=10;
 option.Classification.SIGMA_v=1;
 
 size_signal = 32;
+batch_size = 100;
 
 scat_opt.M = 2;
 
@@ -46,7 +47,7 @@ scat_opt.layer{3}=scat_opt.layer{2};
 %x=rand(32,32);
 filters=filters{1}.translation; 
 
-% Create the config specific to the dataset023
+% Create the config specific to the dataset 
 [class,getImage,score_function,split_function,Wop,Wop_color,ds,filt_opt_color]=recover_dataset(option);
 
 x_train=getImage('train');
@@ -111,8 +112,8 @@ x_train=x_train(:,:,:,1:orig_train_size(4));
 for j = 1 : max_J
     U_j{j}=U_j{j}(:,:,:,1:orig_train_size(4));
 end
-sz = size(S_test, 2);
-loops = ceil(size(x_train, 4) / sz);
+
+loops = ceil(size(x_train, 4) / batch_size);
 S_train=zeros(size(S_test,1),size(x_train,4));
 
 
