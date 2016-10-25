@@ -1,4 +1,4 @@
-function U_tilde = project_PCA(x, PCAfilter, mu, et, patch_size)
+function U_tilde = project_PCA(x, PCAfilter, patch_size)
     [y,s]=tensor_2_vector_PCA(x, patch_size); 
     mm = mean(y, 2);
     y = bsxfun(@minus, y, mm); %
