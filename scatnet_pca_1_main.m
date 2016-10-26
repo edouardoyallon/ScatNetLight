@@ -112,7 +112,7 @@ for j = min_J:max_J
     ex = 0;
     ex2 = 0;    
     for r = 1 : loops
-        fprintf('computing scale %d, batch %d/%d...\n', j, r, loops)
+        fprintf('computing scale %d, learning batch %d/%d...\n', j, r, loops)
         IDX = idx:min ([idx + batch_size - 1, size(x_train, 4)]);
         U_j = compute_J_scale(x_train(:, :, :, IDX), filters, ...
             j, second_only);
@@ -127,7 +127,8 @@ for j = min_J:max_J
     ex2 = ex2 / loops;
     Xcov = ex2 - ex' * ex;
     
-    fprintf ('PCA at scale %d...\n\n', j)
+    fprintf ('computing PCA at scale %d (%d x %d)...\n\n', j, size(Xcov, 1), ...
+        size(Xcov, 2));
     [sv, d, F] = svd(Xcov, 'econ');
     clear U_j_vect
     PCA_filters{j} = F;
@@ -137,26 +138,23 @@ end
 %% computing testing and training data
 
 fprintf ('--- CLASSIFICATION ---\n\n')
-fprintf('testing...\n');
 
 idx = 1;
 loops = ceil(size(x_test, 4) / batch_size);
 
-fprintf ('\tguide samples...\n') %to infer proper size
+fprintf ('guide samples...\n') %to infer proper size
 guide = scat_PCA1(x_test(:, :, :, 1:2), filters, PCA_filters, ...
-        PCA_evals, eps_ratio, max_J, true, patch_size, second_only);
+        PCA_evals, eps_ratio, max_J, patch_size, second_only);
     
 S_test = zeros(size(guide, 1), size(x_test, 4));
-
+fprintf ('\n');
 for r = 1 : loops
-    fprintf('\tbatch %d/%d...\n', r, loops)
+    fprintf('test batch %d/%d...\n', r, loops)
     IDX = idx:min([idx + batch_size - 1, size(x_test, 4)]);
     S_test(:, IDX) = scat_PCA1(x_test(:, :, :, IDX), filters, PCA_filters, ...
-        PCA_evals, eps_ratio, max_J, true, patch_size, second_only);
+        PCA_evals, eps_ratio, max_J, patch_size, second_only);
     idx = idx + batch_size;
 end
-
-fprintf ('training... \n')
 
 % remove data augmentation
 if option.Exp.random_rotations
@@ -168,13 +166,13 @@ end
 
 loops = ceil(size(x_train, 4) / batch_size);
 S_train=zeros(size(S_test, 1), size(x_train, 4));
-
+fprintf ('\n');
 idx = 1;
 for i = 1 : loops
     IDX = idx:min([idx + batch_size - 1, size(x_train, 4)]);
-    fprintf('\tbatch %d/%d...\n', i, loops)
+    fprintf('train batch %d/%d...\n', i, loops)
     S_train(:, IDX) = scat_PCA1(x_train(:, :, :, IDX), filters, PCA_filters, PCA_evals, ... 
-        eps_ratio, max_J, true, patch_size, second_only);
+        eps_ratio, max_J, patch_size, second_only);
     idx = idx + batch_size;
 end
 

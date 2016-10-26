@@ -1,6 +1,6 @@
 
 function S = scat_PCA1(x, filters, PCA_filters, PCA_evals, eps_ratio, J, ...
-    recompute, patch_size, second_only)
+    patch_size, second_only)
     if second_only
         min_J = 2;
           U_tilde = cell(1, J - 1);
@@ -10,18 +10,13 @@ function S = scat_PCA1(x, filters, PCA_filters, PCA_evals, eps_ratio, J, ...
         U_tilde = cell(1, J);
     end
     
-  
     for j = min_J : J
-        if recompute
-            fprintf ('\t\t(compute scale %d)\n', j)
-            U_j = compute_J_scale(x, filters, j, second_only);
-        else
-            U_j = x{j};
-        end
+        fprintf ('\t(compute scale %d)\n', j)
+        U_j = compute_J_scale(x, filters, j, second_only);
         cs = cumsum (PCA_evals{j}) / sum (PCA_evals{j});
         keep = cs < (1. - eps_ratio);
         PCA_cut = PCA_filters{j}(:, keep);
-        fprintf ('\t\t(project pca at scale %d (dims = %s))\n', j, ...
+        fprintf ('\t(project pca at scale %d (dims = %s))\n', j, ...
             num2str(size (PCA_cut)))
         U_tilde_tmp = project_PCA(U_j, PCA_cut, patch_size);
         clear U_j
