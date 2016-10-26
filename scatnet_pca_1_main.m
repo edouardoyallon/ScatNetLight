@@ -16,9 +16,9 @@ option.Exp.max_J = 3;
 option.Exp.log_features = false;
 option.Exp.patch_size = [1 1];
 option.Exp.PCA_eps_ratio = 0.0001;
-option.Exp.random_rotations = 2;
-option.Exp.batch_size = 1000;
-option.Exp.second_only = true;
+option.Exp.random_rotations = 0;
+option.Exp.batch_size = 10;
+option.Exp.second_only = false;
 option.General.path2database = './cifar-10-batches-mat';
 option.General.path2outputs = './Output/';
 option.Classification.C = 10;
@@ -73,8 +73,8 @@ patch_size = option.Exp.patch_size;
 
 % cut data for debugging
 if debug_set
-   x_train = x_train(:, :, :, 1:500); 
-   x_test  = x_test (:, :, :, 1:500); 
+   x_train = x_train(:, :, :, 1:50); 
+   x_test  = x_test (:, :, :, 1:50); 
 end
 
 % store original size before data augmentation
@@ -106,17 +106,25 @@ for j = min_J:max_J
     loops = ceil(size(x_train, 4) / batch_size);
     
     idx = 1;
+    ex = 0;
+    ex2 = 0;    
     for r = 1 : loops
         fprintf('computing scale %d, batch %d/%d...\n', j, r, loops)
         IDX = idx:min ([idx + batch_size - 1, size(x_train, 4)]);
         U_j{j}(:, :, :, IDX) = compute_J_scale(x_train(:, :, :, IDX), filters, ...
             j, second_only);
+        z = tensor_2_vector_PCA(U_j{j}(:,:,:,IDX), patch_size);
+        ex = ex + z;
+        ex2 = ex2 + z'*z;
         idx = idx + batch_size;
     end
-    U_j_vect = tensor_2_vector_PCA(U_j{j}, patch_size);
-    U_j_vect = bsxfun (@minus, U_j_vect, mean (U_j_vect, 2));
+
+    ex = ex / loops;
+    ex2 = ex2 / loops;
+    Xcov = ex2 - ex' * ex;
+    
     fprintf ('PCA at scale %d...\n\n', j)
-    [sv, d, F] = svd(U_j_vect' * U_j_vect, 'econ');
+    [sv, d, F] = svd(Xcov, 'econ');
     clear U_j_vect
     PCA_filters{j} = F;
     PCA_evals{j} = diag (d);
