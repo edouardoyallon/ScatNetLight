@@ -15,8 +15,8 @@ option.Exp.n_batches = 1;
 option.Exp.max_J = 3;
 option.Exp.log_features = false;
 option.Exp.patch_size = [1 1];
-option.Exp.PCA_eps_ratio = 0.0001;
-option.Exp.random_rotations = 0;
+option.Exp.PCA_eps_ratio = 0.001;
+option.Exp.random_rotations = 2;
 option.Exp.batch_size = 10;
 option.Exp.second_only = false;
 option.General.path2database = './cifar-10-batches-mat';
@@ -91,7 +91,7 @@ fprintf ('patch size = %s, random rotations = %d\n\n', num2str(option.Exp.patch_
 % data augmentation
 if option.Exp.random_rotations
     fprintf ('data augmentation...\n\n')
-    x_train = addRandomRotations(x_train, option.Exp.random_rotations, 'bilinear');
+    x_train = addAugmentedImages(x_train, option.Exp.random_rotations, 'bilinear');
 end
 
 %% learning PCA filters
