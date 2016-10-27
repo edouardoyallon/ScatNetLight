@@ -11,13 +11,12 @@ tic;
 q = split_function();
 
 if debug_set
-    labels_train = q{1}(1:50);
-    labels_test = q{2}(1:50);
+    labels_train = q{1}(1:500);
+    labels_test = q{2}(1:500);
 else
     labels_train = q{1};
     labels_test = q{2};
 end
-
 
 outputTrainData = S_train;
 outputTestData = S_test;
