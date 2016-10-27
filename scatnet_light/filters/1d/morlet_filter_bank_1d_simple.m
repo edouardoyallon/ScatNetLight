@@ -76,7 +76,7 @@ for j=0:(J-1)
         filter_spatial = morlet_1d(size_filter, sigma_psi*scale, xi_psi/scale);
         filter_spatial = fftshift(filter_spatial);
         
-        psi.filter{p} = single(real(fft3(filter_spatial)));
+        psi.filter{p} = single(real(fft(filter_spatial)));
         psi.meta.j(p) = j + q/Q;
         
         littlewood_paley = littlewood_paley + abs(psi.filter{p}).^2;
