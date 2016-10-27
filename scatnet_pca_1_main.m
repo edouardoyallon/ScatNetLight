@@ -15,7 +15,7 @@ option.Exp.n_batches = 1;
 option.Exp.max_J = 3;
 option.Exp.log_features = false;
 option.Exp.patch_size = [1 1];
-option.Exp.PCA_eps_ratio = 0.001;
+option.Exp.PCA_eps_ratio = 0;
 option.Exp.random_rotations = 0;
 option.Exp.batch_size = 100;
 option.Exp.second_only = false;
@@ -114,14 +114,15 @@ for j = min_J:max_J
         U_j = compute_J_scale(x_train(:, :, :, IDX), filters, ...
             j, second_only);
         z = tensor_2_vector_PCA(U_j, patch_size);
+        z = bsxfun(@minus, z, mean(z, 2));
         clear U_j;
-        ex = ex + mean(z, 1); 
-        ex2 = ex2 + z'*z / batch_size;
+        ex = ex + sum(z, 1); 
+        ex2 = ex2 + z'*z;
         idx = idx + batch_size;
     end
 
-    ex = ex / (loops);
-    ex2 = ex2 / (loops);
+    ex = ex / (loops * size(z, 1));
+    ex2 = ex2 / (loops * size(z, 1));
     Xcov = ex2 - ex' * ex;
     
     fprintf ('computing PCA at scale %d (%d x %d)...\n\n', j, size(Xcov, 1), ...
