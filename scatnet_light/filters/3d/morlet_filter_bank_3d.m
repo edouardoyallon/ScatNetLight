@@ -88,7 +88,7 @@ angle_axes = compute_semiregular_sphere(options.n_subdivision_sphere,options_ang
 if ~options.antipodal
     angle_axes = angle_axes';
     c = 1;
-    while c < size(angle_axes,1);    
+    while c < size(angle_axes,1)    
         axis0 = angle_axes(c,:);
         i = ismember(angle_axes,-axis0,'rows');
         angle_axes(i,:) = [];

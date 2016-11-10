@@ -18,7 +18,9 @@ filt_opt.J = log2(N);
 filt_opt.n_wavelet_per_octave = 1;
 filt_opt.xi_psi = 3*pi/4;
 filt_opt.sigma_psi = 0.8;
-switch filt_opt.n_wavelet_per_octave % These are set to approximately optimize the Littlewood-Paley condition for J=log2(N) when including the low pass
+switch filt_opt.n_wavelet_per_octave 
+    % These are set to approximately optimize the Littlewood-Paley 
+    % condition for J=log2(N) when including the low pass
     case 1
         filt_opt.sigma_phi = 0.30; 
     case 2
