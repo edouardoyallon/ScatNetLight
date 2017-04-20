@@ -460,7 +460,7 @@ int read_problem_sparse(const mxArray *label_vec, const mxArray *instance_mat)
 	prob.x = Malloc(struct svm_node,prob.l);
 #ifndef _FLOAT_REP
 	x_space = Malloc(double, max_index*prob.l);
-	bzero(x_space,max_index*prob.l*sizeof(double));
+	memset(x_space, 0, max_index*prob.l*sizeof(double));
 #endif
 	
 	for(i=0;i<prob.l;i++)

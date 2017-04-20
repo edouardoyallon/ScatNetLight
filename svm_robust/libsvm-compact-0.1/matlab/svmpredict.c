@@ -32,7 +32,7 @@ void read_sparse_instance(const mxArray *prhs, int index, struct svm_node *x)
 	j = 0;
 	low = (int)jc[index], high = (int)jc[index+1];
 #ifdef _DENSE_REP
-	bzero(x.values,x.dim*sizeof(double));
+	memset(x.values, 0, x.dim*sizeof(double));
 	for(i=low;i<high;i++)
 #ifdef _FLOAT_REP
 		x.values[(int)ir[i]] = (float) samples[i];
